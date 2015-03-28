@@ -1,5 +1,5 @@
 {log} = require 'coffee-mate'
-require './src/global'
+require './global'
 
 plus = (a, b) -> a + b
 fibs =
