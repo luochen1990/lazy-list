@@ -143,7 +143,7 @@ this_module = ({Symbol}) ->
 	take = (n) ->
 		(xs) ->
 			lazylist ->
-				iter = (if xs[Symbol.iterator]? then xs else lazy(xs))[Symbol.iterator]()
+				iter = (if typeof xs is 'function' then xs else lazy(xs))[Symbol.iterator]()
 				c = -1
 				iterator ->
 					if ++c < n then iter() else nil
@@ -151,14 +151,14 @@ this_module = ({Symbol}) ->
 	takeWhile = (ok) ->
 		(xs) ->
 			lazylist ->
-				iter = (if xs[Symbol.iterator]? then xs else lazy(xs))[Symbol.iterator]()
+				iter = (if typeof xs is 'function' then xs else lazy(xs))[Symbol.iterator]()
 				iterator ->
 					if (x = iter()) isnt nil and ok(x) then x else nil
 
 	drop = (n) ->
 		(xs) ->
 			lazylist ->
-				iter = (if xs[Symbol.iterator]? then xs else lazy(xs))[Symbol.iterator]()
+				iter = (if typeof xs is 'function' then xs else lazy(xs))[Symbol.iterator]()
 				finished = false
 				(finished or= (iter() is nil); break if finished) for i in [0...n]
 				if finished then (-> nil) else iter
@@ -166,7 +166,7 @@ this_module = ({Symbol}) ->
 	dropWhile = (ok) ->
 		(xs) ->
 			lazylist ->
-				iter = (if xs[Symbol.iterator]? then xs else lazy(xs))[Symbol.iterator]()
+				iter = (if typeof xs is 'function' then xs else lazy(xs))[Symbol.iterator]()
 				null while ok(x = iter()) and x isnt nil
 				iterator ->
 					[prevx, x] = [x, iter()]
@@ -178,7 +178,7 @@ this_module = ({Symbol}) ->
 				iter = null
 				iterator ->
 					if iter is null
-						iter = (if xs[Symbol.iterator]? then xs else lazy(xs))[Symbol.iterator]()
+						iter = (if typeof xs is 'function' then xs else lazy(xs))[Symbol.iterator]()
 						return x
 					else
 						return iter()
@@ -186,14 +186,14 @@ this_module = ({Symbol}) ->
 	map = (f) ->
 		(xs) ->
 			lazylist ->
-				iter = (if xs[Symbol.iterator]? then xs else lazy(xs))[Symbol.iterator]()
+				iter = (if typeof xs is 'function' then xs else lazy(xs))[Symbol.iterator]()
 				iterator ->
 					if (x = iter()) isnt nil then f(x) else nil
 
 	filter = (ok) ->
 		(xs) ->
 			lazylist ->
-				iter = (if xs[Symbol.iterator]? then xs else lazy(xs))[Symbol.iterator]()
+				iter = (if typeof xs is 'function' then xs else lazy(xs))[Symbol.iterator]()
 				iterator ->
 					null while not ok(x = iter()) and x isnt nil
 					return x
@@ -201,7 +201,7 @@ this_module = ({Symbol}) ->
 	scanl = (f, r) ->
 		(xs) ->
 			lazylist ->
-				iter = (if xs[Symbol.iterator]? then xs else lazy(xs))[Symbol.iterator]()
+				iter = (if typeof xs is 'function' then xs else lazy(xs))[Symbol.iterator]()
 				iterator ->
 					got = r
 					r = if (x = iter()) isnt nil then f(r, x) else nil
@@ -210,7 +210,7 @@ this_module = ({Symbol}) ->
 	streak = (n) ->
 		(xs) ->
 			lazylist ->
-				iter = (if xs[Symbol.iterator]? then xs else lazy(xs))[Symbol.iterator]()
+				iter = (if typeof xs is 'function' then xs else lazy(xs))[Symbol.iterator]()
 				buf = []
 				iterator ->
 					return nil if (x = iter()) is nil
@@ -219,7 +219,7 @@ this_module = ({Symbol}) ->
 					return buf[...]
 
 	reverse = (xs) ->
-		arr = if xs[Symbol.iterator]? then list xs else copy xs
+		arr = if typeof xs is 'function' then list xs else copy xs
 		return lazy arr.reverse()
 
 	# lazylist combiners: concat, zip, zipWith, cartProd,
@@ -245,7 +245,7 @@ this_module = ({Symbol}) ->
 
 		zip = (xss...) ->
 			lazylist ->
-				iters = ((if xs[Symbol.iterator]? then xs else lazy(xs))[Symbol.iterator]() for xs in xss)
+				iters = ((if typeof xs is 'function' then xs else lazy(xs))[Symbol.iterator]() for xs in xss)
 				iterator ->
 					next = (iter() for iter in iters)
 					if finished(next)
@@ -255,7 +255,7 @@ this_module = ({Symbol}) ->
 
 		zipWith = (f) -> (xss...) ->
 			lazylist ->
-				iters = ((if xs[Symbol.iterator]? then xs else lazy(xs))[Symbol.iterator]() for xs in xss)
+				iters = ((if typeof xs is 'function' then xs else lazy(xs))[Symbol.iterator]() for xs in xss)
 				iterator ->
 					next = (iter() for iter in iters)
 					if finished(next)
@@ -292,8 +292,14 @@ this_module = ({Symbol}) ->
 	# lazylist consumers: list, last, length, foldl, best, all, any, foreach,
 
 	list = (xs) -> #force list elements of the lazylist to get an array
-		if xs[Symbol.iterator]?
+		if typeof xs is 'number'
+			n = xs
+			(xs) -> list take(n) xs
+		else if typeof xs is 'function'
 			it = xs[Symbol.iterator]()
+			(x while (x = it()) isnt nil)
+		else if xs[Symbol.iterator]?
+			it = lazy(xs)[Symbol.iterator]()
 			(x while (x = it()) isnt nil)
 		else if xs instanceof Array
 			xs
@@ -302,27 +308,27 @@ this_module = ({Symbol}) ->
 
 	last = (xs) -> #returns nil if xs is empty
 		if not xs[Symbol.iterator]? then xs[xs.length - 1] ? nil else
-			iter = (if xs[Symbol.iterator]? then xs else lazy(xs))[Symbol.iterator]()
+			iter = (if typeof xs is 'function' then xs else lazy(xs))[Symbol.iterator]()
 			r = nil
 			r = x while (x = iter()) isnt nil
 			return r
 
 	length = (xs) ->
 		if not xs[Symbol.iterator]? then xs.length else
-			iter = (if xs[Symbol.iterator]? then xs else lazy(xs))[Symbol.iterator]()
+			iter = (if typeof xs is 'function' then xs else lazy(xs))[Symbol.iterator]()
 			r = 0
 			++r while (x = iter()) isnt nil
 			return r
 
 	foldl = (f, r) ->
 		(xs) ->
-			iter = (if xs[Symbol.iterator]? then xs else lazy(xs))[Symbol.iterator]()
+			iter = (if typeof xs is 'function' then xs else lazy(xs))[Symbol.iterator]()
 			r = f(r, x) while (x = iter()) isnt nil
 			return r
 
 	best = (better) ->
 		(xs) ->
-			iter = (if xs[Symbol.iterator]? then xs else lazy(xs))[Symbol.iterator]()
+			iter = (if typeof xs is 'function' then xs else lazy(xs))[Symbol.iterator]()
 			return null if (r = iter()) is nil
 			while (it = iter()) isnt nil
 				r = if better(it, r) then it else r
@@ -331,7 +337,7 @@ this_module = ({Symbol}) ->
 	all = (f) ->
 		f = ((x) -> x is f) if typeof(f) isnt 'function'
 		(xs) ->
-			iter = (if xs[Symbol.iterator]? then xs else lazy(xs))[Symbol.iterator]()
+			iter = (if typeof xs is 'function' then xs else lazy(xs))[Symbol.iterator]()
 			while (x = iter()) isnt nil
 				return false if not f(x)
 			return true
@@ -344,7 +350,7 @@ this_module = ({Symbol}) ->
 	brk.toString = -> 'foreach.break'
 
 	foreach = (xs, callback, fruit) ->
-		iter = (if xs[Symbol.iterator]? then xs else lazy(xs))[Symbol.iterator]()
+		iter = (if typeof xs is 'function' then xs else lazy(xs))[Symbol.iterator]()
 		while (x = iter()) isnt nil
 			break if callback(x, fruit) is brk
 		fruit

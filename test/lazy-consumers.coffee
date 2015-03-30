@@ -1,6 +1,10 @@
 describe 'consumers', ->
 
 	describe 'list', ->
+		it 'list(n) xs  is short cut for  list take(n) xs', ->
+			assertEqOn(json) (-> list(0) naturals), (-> [])
+			assertEqOn(json) (-> list(1) naturals), (-> [0])
+			assertEqOn(json) (-> list(3) naturals), (-> [0, 1, 2])
 		it 'given normal list do nothing', ->
 			ls0 = []
 			assertEqOn(object_id) (-> list ls0), (-> ls0)
