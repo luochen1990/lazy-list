@@ -90,7 +90,7 @@ lazy.coffee is a better compromise between expressive ability and performance. u
 
 ### why not lazy.js?
 
-lazy.js did almost the same thing like lazy.coffee. But, if you don't like the "dot dot dot..." style, if you don't want to mix things up, if you want better named and designed apis, use this one please. Moreover, this one works well with ES6.
+lazy.js did almost the same thing like lazy.coffee. But, if you don't like the "dot dot dot..." style, if you don't want to mix things up, if you want better named and designed apis, *lazy.coffee* is just for you! Moreover, this one works well with ES6, and has a litte [performance advantage](http://luochen1990.me/try_coffee?code=%22run%20%3D%20(f%2C%20size%20%3D%201e7%2C%20times%20%3D%201)%20-%3E%5Cn%5Ctfor%20i%20in%20%5B0...times%5D%5Cn%5Ct%5Ctf(size)%5Cn%5Cnplus%20%3D%20(x%2C%20y)%20-%3E%20x%20%2B%20y%5Cninc%20%3D%20(x)%20-%3E%20x%20%2B%201%5Cn%5Cntest1%20%3D%20(case_size)%20-%3E%5Cn%5Ctnative_style%20%3D%20-%3E%5Cn%5Ct%5Ctr%20%3D%200%5Cn%5Ct%5Ctfor%20i%20in%20%5B0...case_size%5D%5Cn%5Ct%5Ct%5Ctr%20%2B%3D%20i%5Cn%5Ct%5Ctreturn%20r%5Cn%5Ctlog%20-%3E%20native_style()%5Cn%5Ctlog%20-%3E%20Lazy.range(case_size).reduce(plus%2C%200)%5Cn%5Ctlog%20-%3E%20foldl(plus%2C%200)%20range(case_size)%5Cn%5Cntest2%20%3D%20(case_size)%20-%3E%5Cn%5Ctnative_style2%20%3D%20-%3E%5Cn%5Ct%5Ctr%20%3D%20true%5Cn%5Ct%5Ctok%20%3D%20greaterEqual(0)%5Cn%5Ct%5Ctfor%20i%20in%20%5B0...case_size%5D%5Cn%5Ct%5Ct%5Ctx%20%3D%20inc(i)%5Cn%5Ct%5Ct%5Ctr%20%3D%20r%20and%20ok%20x%5Cn%5Ct%5Ctreturn%20r%5Cn%5Ctlog%20-%3E%20native_style2()%5Cn%5Ctlog%20-%3E%20Lazy.range(case_size).map(inc).none(lessThan%200)%5Cn%5Ctlog%20-%3E%20all(greaterEqual%200)%20map(inc)%20range(case_size)%5Cn%5Cnrun%20test1%5Cnrun%20test2%2C%201e6%22&libs=%5B%22https%3A%2F%2Fcdn.rawgit.com%2Fdtao%2Flazy.js%2F0.4.0%2Flazy.min.js%22%5D) than lazy.js.
 
 ### what is lazy evaluation?
 
@@ -101,7 +101,7 @@ FAQ for FP masters
 
 ### why head, tail (or car, cdr for lispers), foldr, id, filp etc. is not provided?
 
-This library attemts to provides a sort of utils which takes minutes to implement. It will take a lot of names to provide the takes-seconds-to-implement things, which will not be a good practice in javascript(in which it's hard to manage names). if you need them somewhere, implement them yourself.
+This library attemts to provides a sort of utils which takes minutes to implement. It will take a lot of names to provide the takes-seconds-to-implement things, which will not be a good practice in javascript(in which it's hard to manage names). if you need them somewhere, implement them yourself like [this](http://luochen1990.me/try_coffee?code=%22car%20%3D%20head%20%3D%20(xs)%20-%3E%20last%20take(1)%20xs%5Cncdr%20%3D%20tail%20%3D%20drop(1)%5Cnid%20%3D%20(x)%20-%3E%20x%5Cnflip%20%3D%20(f)%20-%3E%20(x)%20-%3E%20(y)%20-%3E%20f(y)(x)%5Cn%22).
 
 ### why fold is not provided?
 
