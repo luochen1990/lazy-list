@@ -1,6 +1,6 @@
 {
   "name": "lazy.coffee",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "CoffeeScript Lazy Evaluation",
   "author": "luochen1990",
   "license": "MIT",

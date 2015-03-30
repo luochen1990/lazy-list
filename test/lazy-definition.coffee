@@ -5,15 +5,17 @@ describe 'definition', ->
 			assert -> nil isnt null
 		it 'nil isnt undefined', ->
 			assert -> nil isnt undefined
-		it 'nil.iter() is nil', ->
-			assert -> nil.iter() is nil
+		it 'nil[Symbol.iterator]() is nil', ->
+			log -> Symbol.iterator
+			log -> json Symbol.iterator
+			assert -> nil[Symbol.iterator]() is nil
 		it 'nil() is nil', ->
 			assert -> nil() is nil
 
 	describe 'lazylist', ->
-		it 'gives funtions .iter()', ->
-			assert -> (lazylist ->).iter?
-			assert -> typeof (lazylist ->).iter is 'function'
+		it 'gives funtions [Symbol.iterator]()', ->
+			assert -> (lazylist ->)[Symbol.iterator]?
+			assert -> typeof (lazylist ->)[Symbol.iterator] is 'function'
 		it 'gives funtions .toString()', ->
 			assert -> (lazylist ->).toString?
 			assert -> typeof (lazylist ->).toString is 'function'

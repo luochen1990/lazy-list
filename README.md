@@ -10,7 +10,7 @@ A lazy javascript library for Haskell & FP(Functional Programming) lovers.
 - includes useful things like random_gen, permutation_gen, cartProd.
 - fully tested.
 - use it without CoffeeScript is also ok.
-- ES6 supported. (you can use the for...of syntax to enumerate an lazylist iterator)
+- ES6 supported. (you can use the for...of syntax to enumerate an lazylist)
 
 Concepts [_details_](APIs.md)
 --------
@@ -90,7 +90,7 @@ lazy.coffee is a better compromise between expressive ability and performance. u
 
 ### why not lazy.js?
 
-lazy.js did almost the same thing like lazy.coffee. But, if you don't like the "dot dot dot..." style, if you don't want to mix things up, if you want better named and designed apis, use this one please. Moreover, lazy.coffee works well with ES6, and has a litte performance advantage than lazy.js.
+lazy.js did almost the same thing like lazy.coffee. But, if you don't like the "dot dot dot..." style, if you don't want to mix things up, if you want better named and designed apis, use this one please. Moreover, this one works well with ES6.
 
 ### what is lazy evaluation?
 

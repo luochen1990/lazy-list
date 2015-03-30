@@ -5,7 +5,7 @@ describe 'producers', ->
 			assertEq (-> last lazy -> do nil), -> nil
 		it 'given array returns an iterator', ->
 			assertEq (-> last lazy []), -> nil
-			assert -> (lazy [1, 2, 3]).iter?
+			assert -> (lazy [1, 2, 3])[Symbol.iterator]?
 			assertEqOn(every_one) (-> lazy [1, 2, 3]), -> [1, 2, 3]
 			arr = [{}, {}, {}]
 			assertEqOn(every_one) (-> lazy arr), -> arr
