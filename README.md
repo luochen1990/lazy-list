@@ -12,8 +12,10 @@ A lazy javascript library for Haskell & FP(Functional Programming) lovers.
 - use it without CoffeeScript is also ok.
 - ES6 supported. (you can use the for...of syntax to enumerate an lazylist)
 
-Concepts [_details_](APIs.md)
---------
+Conceptions
+-----------
+
+Here explained the core conceptions of lazy.coffee. you can find [**APIs' descriptions and demo** here](APIs.md)
 
 ### nil, lazylist, iterator
 
@@ -81,8 +83,8 @@ fibs = map(([a, b]) -> a) generate [0, 1], ([a, b]) -> [b, a + b]
 console.log last take(1000) fibs #will finish in 1 second
 ```
 
-FAQ for FP newbies
-------------------
+FAQ
+---
 
 ### why not underscore?
 
@@ -90,14 +92,11 @@ lazy.coffee is a better compromise between expressive ability and performance. u
 
 ### why not lazy.js?
 
-lazy.js did almost the same thing like lazy.coffee. But, if you don't like the "dot dot dot..." style, if you don't want to mix things up, if you want better named and designed apis, *lazy.coffee* is just for you! Moreover, this one works well with ES6, and has a litte [performance advantage](http://luochen1990.me/try_coffee?code=%22run%20%3D%20(f%2C%20size%20%3D%201e7%2C%20times%20%3D%201)%20-%3E%5Cn%5Ctfor%20i%20in%20%5B0...times%5D%5Cn%5Ct%5Ctf(size)%5Cn%5Cnplus%20%3D%20(x%2C%20y)%20-%3E%20x%20%2B%20y%5Cninc%20%3D%20(x)%20-%3E%20x%20%2B%201%5Cn%5Cntest1%20%3D%20(case_size)%20-%3E%5Cn%5Ctnative_style%20%3D%20-%3E%5Cn%5Ct%5Ctr%20%3D%200%5Cn%5Ct%5Ctfor%20i%20in%20%5B0...case_size%5D%5Cn%5Ct%5Ct%5Ctr%20%2B%3D%20i%5Cn%5Ct%5Ctreturn%20r%5Cn%5Ctlog%20-%3E%20native_style()%5Cn%5Ctlog%20-%3E%20Lazy.range(case_size).reduce(plus%2C%200)%5Cn%5Ctlog%20-%3E%20foldl(plus%2C%200)%20range(case_size)%5Cn%5Cntest2%20%3D%20(case_size)%20-%3E%5Cn%5Ctnative_style2%20%3D%20-%3E%5Cn%5Ct%5Ctr%20%3D%20true%5Cn%5Ct%5Ctok%20%3D%20greaterEqual(0)%5Cn%5Ct%5Ctfor%20i%20in%20%5B0...case_size%5D%5Cn%5Ct%5Ct%5Ctx%20%3D%20inc(i)%5Cn%5Ct%5Ct%5Ctr%20%3D%20r%20and%20ok%20x%5Cn%5Ct%5Ctreturn%20r%5Cn%5Ctlog%20-%3E%20native_style2()%5Cn%5Ctlog%20-%3E%20Lazy.range(case_size).map(inc).none(lessThan%200)%5Cn%5Ctlog%20-%3E%20all(greaterEqual%200)%20map(inc)%20range(case_size)%5Cn%5Cnrun%20test1%5Cnrun%20test2%2C%201e6%22&libs=%5B%22https%3A%2F%2Fcdn.rawgit.com%2Fdtao%2Flazy.js%2F0.4.0%2Flazy.min.js%22%5D) than lazy.js.
+lazy.js did almost the same thing like lazy.coffee. But, if you don't like the "dot dot dot..." style, if you don't want to mix things up, if you want better named and designed apis, *lazy.coffee* is just for you! Moreover, this one works well with ES6, and has a litte [performance advantage](http://luochen1990.me/try_coffee?libs=%5B%22https%3A%2F%2Fcdn.rawgit.com%2Fdtao%2Flazy.js%2F0.4.0%2Flazy.min.js%22%5D#cnVuID0gKGYsIHNpemUgPSAxZTcsIHRpbWVzID0gMSkgLT4KCWZvciBpIGluIFswLi4udGltZXNdCgkJZihzaXplKQoKcGx1cyA9ICh4LCB5KSAtPiB4ICsgeQppbmMgPSAoeCkgLT4geCArIDEKCnRlc3QxID0gKGNhc2Vfc2l6ZSkgLT4KCW5hdGl2ZV9zdHlsZSA9IC0+CgkJciA9IDAKCQlmb3IgaSBpbiBbMC4uLmNhc2Vfc2l6ZV0KCQkJciArPSBpCgkJcmV0dXJuIHIKCWxvZyAtPiBuYXRpdmVfc3R5bGUoKQoJbG9nIC0+IExhenkucmFuZ2UoY2FzZV9zaXplKS5yZWR1Y2UocGx1cywgMCkKCWxvZyAtPiBmb2xkbChwbHVzLCAwKSByYW5nZShjYXNlX3NpemUpCgp0ZXN0MiA9IChjYXNlX3NpemUpIC0+CgluYXRpdmVfc3R5bGUyID0gLT4KCQlyID0gdHJ1ZQoJCW9rID0gZ3JlYXRlckVxdWFsKDApCgkJZm9yIGkgaW4gWzAuLi5jYXNlX3NpemVdCgkJCXggPSBpbmMoaSkKCQkJciA9IHIgYW5kIG9rIHgKCQlyZXR1cm4gcgoJbG9nIC0+IG5hdGl2ZV9zdHlsZTIoKQoJbG9nIC0+IExhenkucmFuZ2UoY2FzZV9zaXplKS5tYXAoaW5jKS5ub25lKGxlc3NUaGFuIDApCglsb2cgLT4gYWxsKGdyZWF0ZXJFcXVhbCAwKSBtYXAoaW5jKSByYW5nZShjYXNlX3NpemUpCgpydW4gdGVzdDEKcnVuIHRlc3QyLCAxZTY=) than lazy.js.
 
 ### what is lazy evaluation?
 
 In short, lazy evaluation records the process of evaluation in some way(called "thunk"), but only really evaluate it when you need it. this makes your program use less memory than in strict evaluation. This way, you can also express infinity sequences naturally like `range(2, Infinity)`, `primes`, `randoms` etc.
-
-FAQ for FP masters
-------------------
 
 ### why head, tail (or car, cdr for lispers), foldr, id, filp etc. is not provided?
 
@@ -107,12 +106,16 @@ This library attemts to provides a sort of utils which takes minutes to implemen
 
 In Haskell, fold is used on Monoids which gives the definition of empty element for the operator. But there is not a similar way to decide what to return when given an empty list. ie. `fold(plus) []` should return `0` but `fold(product) []` should return `1`. So just use foldl and provide an init element like this: `foldl(plus, 0) []`.
 
+### why it is designed like this?
+
+Of course there is many other possible definition about lazylist. But I have to consider about both the design and the performance reason. here is a [comparison](http://luochen1990.me/try_coffee?#cGx1cyA9ICh4LCB5KSAtPiB4ICsgeQpjYXNlX3NpemUgPSAxZTYKCmxvZyAtPiBmb2xkbChwbHVzLCAwKSByYW5nZShjYXNlX3NpemUpCgpjbGFzcyBMYXp5TGlzdAoJY29uc3RydWN0b3I6IChzdGF0dXMsIGl0ZXIpIC0+CgkJQFtTeW1ib2wuaXRlcmF0b3JdID0gLT4KCQkJbmV3IEl0ZXJhdG9yKHN0YXR1cywgaXRlcikKCmNsYXNzIEl0ZXJhdG9yCgljb25zdHJ1Y3RvcjogKHN0YXR1cywgQGl0ZXIpIC0+CgkJQFtrXSA9IHYgZm9yIGssIHYgb2Ygc3RhdHVzCgluZXh0OiAtPgoJCXIgPSBAaXRlcigpCgkJe3ZhbHVlOiByLCBkb25lOiByID09IG5pbH0KCm5pbCA9IG5ldyBMYXp5TGlzdCB7fSwgLT4gbmlsCgpyYW5nZTIgPSAoc3RvcCkgLT4KCW5ldyBMYXp5TGlzdCB7YzogLTF9LCAtPgoJCWlmICsrQGMgPCBzdG9wIHRoZW4gQGMgZWxzZSBuaWwKCQkJCmZvbGRsMiA9IChmLCByKSAtPgoJKHhzKSAtPgoJCWl0ID0geHNbU3ltYm9sLml0ZXJhdG9yXSgpCgkJaXRlciA9IC0+IGl0Lml0ZXIoKQoJCXIgPSBmKHIsIHgpIHdoaWxlICh4ID0gaXRlcigpKSBpc250IG5pbAoJCXJldHVybiByCgpsb2cgLT4gZm9sZGwyKHBsdXMsIDApIHJhbmdlMihjYXNlX3NpemUp) about this implementation and another beautiful(but slow) implementation.
+
 Install
 -------
 
 #### install & require in nodejs
 
-- install with npm: `npm install lazy.coffee`
+- install with npm: `your/repo/> npm install lazy.coffee`
 - require separately: `{map, filter} = require 'lazy.coffee'`
 - require globally: `require 'lazy.coffee/global'`
 
@@ -122,7 +125,9 @@ Install
 <script src="http://rawgit.com/luochen1990/lazy.coffee/master/build/global.coffee.js" type="text/javascript"></script>
 ```
 
-Run Demo
+NOTE: this [*rawgit*](http://rawgit.com/) url is just for test, please don't use it for production.
+
+Run demo
 --------
 
 run `coffee ./demo.coffee` under directory `lazy.coffee/` directly after you have `coffee-script` installed.
