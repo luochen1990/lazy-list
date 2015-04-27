@@ -109,7 +109,7 @@ this_module = ({Symbol}) ->
 			x = Math.sin(x) * 1e4
 			x - Math.floor(x)
 		(opts) ->
-			seed = opts?.seed ? Math.random()
+			seed = hash(opts?.seed ? Math.random())
 			generate seed, hash
 
 	ranged_random_gen = (range, opts) ->

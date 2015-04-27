@@ -47,6 +47,8 @@ describe 'producers', ->
 			assert -> any((x) -> 0.00 <= x < 0.33) take(100) random_gen()
 			assert -> any((x) -> 0.33 <= x < 0.66) take(100) random_gen()
 			assert -> any((x) -> 0.66 <= x < 1.00) take(100) random_gen()
+			assert -> all((x) -> 0 <= x < 1.00) take(100) random_gen()
+			assert -> all((x) -> 0 <= x < 1.00) take(100) random_gen(seed: 2)
 		it 'generate the same sequence when given the same seed', ->
 			assertEqOn(json) (-> list take(10) random_gen(seed: 3)), (-> list take(10) random_gen(seed: 3))
 		it 'generate different sequences without given seed', ->
