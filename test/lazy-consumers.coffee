@@ -47,6 +47,10 @@ describe 'consumers', ->
 			assertEq (-> foldl(plus, 0) range(1, 4)), -> 6
 		it 'foldl(f, r) given nil returns r', ->
 			assertEq (-> foldl(plus, 9) nil), -> 9
+		it 'is safe when partly-applied named', ->
+			named_folder = foldl ((r, x) -> r + (x)), 0
+			assertEq (-> named_folder [1, 2]), -> 3
+			assertEq (-> named_folder [1, 3]), -> 4
 
 	describe 'best', ->
 		lessThan = (x, y) -> x < y

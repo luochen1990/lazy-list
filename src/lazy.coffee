@@ -320,8 +320,9 @@ this_module = ({Symbol}) ->
 			++r while (x = iter()) isnt nil
 			return r
 
-	foldl = (f, r) ->
+	foldl = (f, init) ->
 		(xs) ->
+			r = init
 			iter = (if typeof xs is 'function' then xs else lazy(xs))[Symbol.iterator]()
 			r = f(r, x) while (x = iter()) isnt nil
 			return r
