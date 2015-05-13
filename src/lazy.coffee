@@ -60,7 +60,7 @@ this_module = ({Symbol}) ->
 	primes = lazylist -> do
 		filter((x) -> all((p) -> x % p != 0) takeWhile((p) -> p * p <= x) range(2, Infinity)) range(2, Infinity)
 
-	# lazylist producers: lazy, enumerate, generate, random_gen, ranged_random_gen, permutation_gen,
+	# lazylist producers: lazy, enumerate, iterate, random_gen, ranged_random_gen, permutation_gen,
 
 	lazy = (arr) -> #make a lazylist from array or function
 		if typeof arr is 'function'
@@ -96,7 +96,7 @@ this_module = ({Symbol}) ->
 			iterator ->
 				x
 
-	generate = (init, next) -> #function next should not change it's argument
+	iterate = (next, init) -> #function next should not change it's argument
 		lazylist ->
 			status = init
 			iterator ->
@@ -110,7 +110,7 @@ this_module = ({Symbol}) ->
 			x - Math.floor(x)
 		(opts) ->
 			seed = hash(opts?.seed ? Math.random())
-			generate seed, hash
+			iterate hash, seed
 
 	ranged_random_gen = (range, opts) ->
 		seed = opts?.seed ? Math.random()
@@ -136,7 +136,7 @@ this_module = ({Symbol}) ->
 
 		(arr) ->
 			if arr.length == 0 then nil else
-				concat [arr[...]], takeWhile((ls) -> json(ls) != json(arr)) drop(1) generate arr, next_permutation
+				concat [arr[...]], takeWhile((ls) -> json(ls) != json(arr)) drop(1) iterate next_permutation, arr
 
 	# lazylist decorators: take, takeWhile, drop, dropWhile, cons, map, filter, scanl, streak, reverse,
 
@@ -371,7 +371,7 @@ this_module = ({Symbol}) ->
 		naturals, range, primes,
 
 		# lazylist producers
-		lazy, enumerate, repeat, generate, random_gen, ranged_random_gen, permutation_gen,
+		lazy, enumerate, repeat, iterate, random_gen, ranged_random_gen, permutation_gen,
 
 		# lazylist decorators
 		cons, map, filter, take, takeWhile, drop, dropWhile, scanl, streak, reverse,

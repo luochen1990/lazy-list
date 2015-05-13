@@ -21,7 +21,7 @@ Producers
 [`lazy`]()
 [`enumerate`]()
 [`repeat`]()
-[`generate`]()
+[`iterate`]()
 [`random_gen`]()
 [`ranged_random_gen`]()
 [`permutation_gen`]()

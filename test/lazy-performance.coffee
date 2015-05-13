@@ -17,7 +17,7 @@ describe 'performance', ->
 		rec_fibs = lazy -> do
 			cons(0) cons(1) (zipWith(plus) rec_fibs, (drop(1) rec_fibs))
 
-		fibs = map(([a, b]) -> a) generate [0, 1], ([a, b]) -> [b, a + b]
+		fibs = map(([a, b]) -> a) iterate (([a, b]) -> [b, a + b]), [0, 1]
 
 		for times in [0..2]
 			log -> last take(15) rec_fibs

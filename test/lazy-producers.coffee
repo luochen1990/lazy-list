@@ -35,9 +35,9 @@ describe 'producers', ->
 			f = ->
 			assertEqOn(every_one) (-> take(2) repeat f), (-> [f, f])
 
-	describe 'generate', ->
+	describe 'iterate', ->
 		it 'defines fast fibs', ->
-			fibs = map(([a, b]) -> a) generate [0, 1], ([a, b]) -> [b, a + b]
+			fibs = map(([a, b]) -> a) iterate (([a, b]) -> [b, a + b]), [0, 1]
 			assertEqOn(json) (-> list take(8) fibs), -> [0, 1, 1, 2, 3, 5, 8, 13]
 
 	describe 'random_gen', ->
