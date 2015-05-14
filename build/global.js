@@ -268,7 +268,7 @@ this_module = function(arg) {
     return function(xs) {
       return LazyList(function() {
         var c, iter;
-        iter = (typeof xs === 'function' ? xs : lazy(xs))[Symbol.iterator]();
+        iter = lazy(xs)[Symbol.iterator]();
         c = -1;
         return Iterator(function() {
           if (++c < n) {
@@ -284,7 +284,7 @@ this_module = function(arg) {
     return function(xs) {
       return LazyList(function() {
         var iter;
-        iter = (typeof xs === 'function' ? xs : lazy(xs))[Symbol.iterator]();
+        iter = lazy(xs)[Symbol.iterator]();
         return Iterator(function() {
           var x;
           if ((x = iter()) !== nil && ok(x)) {
@@ -300,7 +300,7 @@ this_module = function(arg) {
     return function(xs) {
       return LazyList(function() {
         var finished, i, iter, j, ref;
-        iter = (typeof xs === 'function' ? xs : lazy(xs))[Symbol.iterator]();
+        iter = lazy(xs)[Symbol.iterator]();
         finished = false;
         for (i = j = 0, ref = n; 0 <= ref ? j < ref : j > ref; i = 0 <= ref ? ++j : --j) {
           finished || (finished = iter() === nil);
@@ -322,7 +322,7 @@ this_module = function(arg) {
     return function(xs) {
       return LazyList(function() {
         var iter, x;
-        iter = (typeof xs === 'function' ? xs : lazy(xs))[Symbol.iterator]();
+        iter = lazy(xs)[Symbol.iterator]();
         while (ok(x = iter()) && x !== nil) {
           null;
         }
@@ -341,7 +341,7 @@ this_module = function(arg) {
         iter = null;
         return Iterator(function() {
           if (iter === null) {
-            iter = (typeof xs === 'function' ? xs : lazy(xs))[Symbol.iterator]();
+            iter = lazy(xs)[Symbol.iterator]();
             return x;
           } else {
             return iter();
@@ -377,7 +377,7 @@ this_module = function(arg) {
     return function(xs) {
       return LazyList(function() {
         var iter;
-        iter = (typeof xs === 'function' ? xs : lazy(xs))[Symbol.iterator]();
+        iter = lazy(xs)[Symbol.iterator]();
         return Iterator(function() {
           var x;
           if ((x = iter()) !== nil) {
@@ -393,7 +393,7 @@ this_module = function(arg) {
     return function(xs) {
       return LazyList(function() {
         var iter;
-        iter = (typeof xs === 'function' ? xs : lazy(xs))[Symbol.iterator]();
+        iter = lazy(xs)[Symbol.iterator]();
         return Iterator(function() {
           var x;
           while (!ok(x = iter()) && x !== nil) {
@@ -408,7 +408,7 @@ this_module = function(arg) {
     return function(xs) {
       return LazyList(function() {
         var iter;
-        iter = (typeof xs === 'function' ? xs : lazy(xs))[Symbol.iterator]();
+        iter = lazy(xs)[Symbol.iterator]();
         return Iterator(function() {
           var got, x;
           got = r;
@@ -422,7 +422,7 @@ this_module = function(arg) {
     return function(xs) {
       return LazyList(function() {
         var buf, iter;
-        iter = (typeof xs === 'function' ? xs : lazy(xs))[Symbol.iterator]();
+        iter = lazy(xs)[Symbol.iterator]();
         buf = [];
         return Iterator(function() {
           var x;
@@ -440,7 +440,7 @@ this_module = function(arg) {
   };
   reverse = function(xs) {
     var arr;
-    arr = typeof xs === 'function' ? list(xs) : copy(xs);
+    arr = list(lazy(xs));
     return lazy(arr.reverse());
   };
   join = function(xss) {
@@ -484,7 +484,7 @@ this_module = function(arg) {
           results = [];
           for (j = 0, len1 = xss.length; j < len1; j++) {
             xs = xss[j];
-            results.push((typeof xs === 'function' ? xs : lazy(xs))[Symbol.iterator]());
+            results.push(lazy(xs)[Symbol.iterator]());
           }
           return results;
         })();
@@ -518,7 +518,7 @@ this_module = function(arg) {
             results = [];
             for (j = 0, len1 = xss.length; j < len1; j++) {
               xs = xss[j];
-              results.push((typeof xs === 'function' ? xs : lazy(xs))[Symbol.iterator]());
+              results.push(lazy(xs)[Symbol.iterator]());
             }
             return results;
           })();
@@ -626,11 +626,8 @@ this_module = function(arg) {
   })();
   list = function(xs) {
     var it, n, results, results1, x;
-    if (typeof xs === 'number') {
-      n = xs;
-      return function(xs) {
-        return list(take(n)(xs));
-      };
+    if (xs instanceof Array) {
+      return xs;
     } else if (typeof xs === 'function') {
       it = xs[Symbol.iterator]();
       results = [];
@@ -645,8 +642,11 @@ this_module = function(arg) {
         results1.push(x);
       }
       return results1;
-    } else if (xs instanceof Array) {
-      return xs;
+    } else if (typeof xs === 'number') {
+      n = xs;
+      return function(xs) {
+        return list(take(n)(xs));
+      };
     } else {
       throw Error('list(xs): xs is neither LazyList nor Array');
     }
@@ -656,7 +656,7 @@ this_module = function(arg) {
     if (xs[Symbol.iterator] == null) {
       return (ref1 = xs[xs.length - 1]) != null ? ref1 : nil;
     } else {
-      iter = (typeof xs === 'function' ? xs : lazy(xs))[Symbol.iterator]();
+      iter = lazy(xs)[Symbol.iterator]();
       r = nil;
       while ((x = iter()) !== nil) {
         r = x;
@@ -669,7 +669,7 @@ this_module = function(arg) {
     if (xs[Symbol.iterator] == null) {
       return xs.length;
     } else {
-      iter = (typeof xs === 'function' ? xs : lazy(xs))[Symbol.iterator]();
+      iter = lazy(xs)[Symbol.iterator]();
       r = 0;
       while ((x = iter()) !== nil) {
         ++r;
@@ -681,7 +681,7 @@ this_module = function(arg) {
     return function(xs) {
       var iter, r, x;
       r = init;
-      iter = (typeof xs === 'function' ? xs : lazy(xs))[Symbol.iterator]();
+      iter = lazy(xs)[Symbol.iterator]();
       while ((x = iter()) !== nil) {
         r = f(r, x);
       }
@@ -691,7 +691,7 @@ this_module = function(arg) {
   best = function(better) {
     return function(xs) {
       var it, iter, r;
-      iter = (typeof xs === 'function' ? xs : lazy(xs))[Symbol.iterator]();
+      iter = lazy(xs)[Symbol.iterator]();
       if ((r = iter()) === nil) {
         return null;
       }
@@ -709,7 +709,7 @@ this_module = function(arg) {
     }
     return function(xs) {
       var iter, x;
-      iter = (typeof xs === 'function' ? xs : lazy(xs))[Symbol.iterator]();
+      iter = lazy(xs)[Symbol.iterator]();
       while ((x = iter()) !== nil) {
         if (!f(x)) {
           return false;
@@ -735,7 +735,7 @@ this_module = function(arg) {
   };
   foreach = function(xs, callback, fruit) {
     var iter, x;
-    iter = (typeof xs === 'function' ? xs : lazy(xs))[Symbol.iterator]();
+    iter = lazy(xs)[Symbol.iterator]();
     while ((x = iter()) !== nil) {
       if (callback(x, fruit) === brk) {
         break;
