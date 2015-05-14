@@ -9,7 +9,7 @@ describe 'recursive', ->
 
 	it 'fibs-via-concat', ->
 		fibs = lazy -> do
-			concat [0, 1], (zipWith(plus) fibs, (drop(1) fibs))
+			concat([0, 1]) (zipWith(plus) fibs, (drop(1) fibs))
 
 		assertEqOn(json) (-> list take(8) fibs), (-> [0, 1, 1, 2, 3, 5, 8, 13])
 
@@ -23,7 +23,7 @@ describe 'recursive', ->
 	it 'circle-via-concat', ->
 		circle = (ls) ->
 			lazy -> do
-				concat ls, circle ls
+				concat(ls) circle(ls)
 
 		assertEqOn(json) (-> list take(8) circle [1, 2, 3]), (-> [1, 2, 3, 1, 2, 3, 1, 2])
 

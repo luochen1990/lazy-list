@@ -11,6 +11,14 @@ describe 'decorators', ->
 					cons(x) another_repeat(x)
 			assertEqOn(json) (-> list take(3) another_repeat(1)), (-> [1, 1, 1])
 
+	describe 'concat', ->
+		it 'concat(nil) nil returns empty', ->
+			assertEq (-> last concat(nil) nil), -> nil
+		it 'concat([1]) nil) returns lazy [1]', ->
+			assertEqOn(every_one) (-> concat([1]) nil), (-> [1])
+		it 'concat(nil) [1]) returns lazy [1]', ->
+			assertEqOn(every_one) (-> concat(nil) [1]), (-> [1])
+
 	describe 'map', ->
 		inc = (x) -> x + 1
 

@@ -139,9 +139,9 @@ this_module = ({Symbol}) ->
 
 		(arr) ->
 			if arr.length == 0 then nil else
-				concat [arr[...]], takeWhile((ls) -> json(ls) != json(arr)) drop(1) iterate next_permutation, arr
+				cons(arr[...]) takeWhile((ls) -> json(ls) != json(arr)) drop(1) iterate(next_permutation, arr)
 
-	# LazyList decorators: take, takeWhile, drop, dropWhile, cons, map, filter, scanl, streak, reverse,
+	# LazyList decorators: take, takeWhile, drop, dropWhile, cons, concat, map, filter, scanl, streak, reverse,
 
 	take = (n) ->
 		(xs) ->
@@ -186,6 +186,22 @@ this_module = ({Symbol}) ->
 					else
 						return iter()
 
+	concat = (ws) ->
+		(xs) ->
+			LazyList ->
+				xs_unused = true
+				iter = lazy(ws)[Symbol.iterator]()
+				Iterator ->
+					if xs_unused
+						if (x = iter()) isnt nil
+							return x
+						else
+							iter = lazy(xs)[Symbol.iterator]()
+							xs_unused = false
+							return iter()
+					else
+						return iter()
+
 	map = (f) ->
 		(xs) ->
 			LazyList ->
@@ -225,17 +241,18 @@ this_module = ({Symbol}) ->
 		arr = if typeof xs is 'function' then list xs else copy xs
 		return lazy arr.reverse()
 
-	# LazyList combiners: concat, zip, zipWith, cartProd,
+	# LazyList combiners: join, zip, zipWith, cartProd,
 
-	concat = (xss...) ->
+	join = (xss) ->
 		LazyList ->
-			iter = (if xss[0][Symbol.iterator]? then xss[0] else lazy(xss[0]))[Symbol.iterator]()
-			current_index = 0
+			xs_iter = lazy(xss)[Symbol.iterator]()
+			xs = xs_iter()
+			iter = lazy(xs)[Symbol.iterator]()
 			Iterator ->
 				if (x = iter()) isnt nil
 					return x
-				else if (++current_index < xss.length)
-					iter = (if xss[current_index][Symbol.iterator]? then xss[current_index] else lazy(xss[current_index]))[Symbol.iterator]()
+				else if (xs = xs_iter()) isnt nil
+					iter = lazy(xs)[Symbol.iterator]()
 					return iter()
 				else
 					return nil
@@ -377,10 +394,10 @@ this_module = ({Symbol}) ->
 		lazy, enumerate, repeat, iterate, random_gen, ranged_random_gen, permutation_gen,
 
 		# LazyList decorators
-		cons, map, filter, take, takeWhile, drop, dropWhile, scanl, streak, reverse,
+		cons, concat, map, filter, take, takeWhile, drop, dropWhile, scanl, streak, reverse,
 
 		# LazyList combiners
-		concat, zip, zipWith, cartProd,
+		join, zip, zipWith, cartProd,
 
 		# LazyList consumers
 		list, last, length, foldl, best, all, any, foreach,

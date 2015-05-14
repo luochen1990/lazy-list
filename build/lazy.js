@@ -3,7 +3,7 @@ var this_module,
   slice = [].slice;
 
 this_module = function(arg) {
-  var Iterator, LazyList, Symbol, all, any, best, brk, cartProd, concat, cons, drop, dropWhile, enumerate, filter, foldl, foreach, iterate, last, lazy, length, list, map, naturals, nil, permutation_gen, primes, random_gen, range, ranged_random_gen, ref, repeat, reverse, scanl, streak, take, takeWhile, zip, zipWith;
+  var Iterator, LazyList, Symbol, all, any, best, brk, cartProd, concat, cons, drop, dropWhile, enumerate, filter, foldl, foreach, iterate, join, last, lazy, length, list, map, naturals, nil, permutation_gen, primes, random_gen, range, ranged_random_gen, ref, repeat, reverse, scanl, streak, take, takeWhile, zip, zipWith;
   Symbol = arg.Symbol;
   LazyList = function(f) {
     f[Symbol.iterator] = function() {
@@ -243,7 +243,7 @@ this_module = function(arg) {
       if (arr.length === 0) {
         return nil;
       } else {
-        return concat([arr.slice(0)], takeWhile(function(ls) {
+        return cons(arr.slice(0))(takeWhile(function(ls) {
           return json(ls) !== json(arr);
         })(drop(1)(iterate(next_permutation, arr))));
       }
@@ -335,6 +335,29 @@ this_module = function(arg) {
       });
     };
   };
+  concat = function(ws) {
+    return function(xs) {
+      return LazyList(function() {
+        var iter, xs_unused;
+        xs_unused = true;
+        iter = lazy(ws)[Symbol.iterator]();
+        return Iterator(function() {
+          var x;
+          if (xs_unused) {
+            if ((x = iter()) !== nil) {
+              return x;
+            } else {
+              iter = lazy(xs)[Symbol.iterator]();
+              xs_unused = false;
+              return iter();
+            }
+          } else {
+            return iter();
+          }
+        });
+      });
+    };
+  };
   map = function(f) {
     return function(xs) {
       return LazyList(function() {
@@ -405,19 +428,18 @@ this_module = function(arg) {
     arr = typeof xs === 'function' ? list(xs) : copy(xs);
     return lazy(arr.reverse());
   };
-  concat = function() {
-    var xss;
-    xss = 1 <= arguments.length ? slice.call(arguments, 0) : [];
+  join = function(xss) {
     return LazyList(function() {
-      var current_index, iter;
-      iter = (xss[0][Symbol.iterator] != null ? xss[0] : lazy(xss[0]))[Symbol.iterator]();
-      current_index = 0;
+      var iter, xs, xs_iter;
+      xs_iter = lazy(xss)[Symbol.iterator]();
+      xs = xs_iter();
+      iter = lazy(xs)[Symbol.iterator]();
       return Iterator(function() {
         var x;
         if ((x = iter()) !== nil) {
           return x;
-        } else if (++current_index < xss.length) {
-          iter = (xss[current_index][Symbol.iterator] != null ? xss[current_index] : lazy(xss[current_index]))[Symbol.iterator]();
+        } else if ((xs = xs_iter()) !== nil) {
+          iter = lazy(xs)[Symbol.iterator]();
           return iter();
         } else {
           return nil;
@@ -730,6 +752,7 @@ this_module = function(arg) {
     ranged_random_gen: ranged_random_gen,
     permutation_gen: permutation_gen,
     cons: cons,
+    concat: concat,
     map: map,
     filter: filter,
     take: take,
@@ -739,7 +762,7 @@ this_module = function(arg) {
     scanl: scanl,
     streak: streak,
     reverse: reverse,
-    concat: concat,
+    join: join,
     zip: zip,
     zipWith: zipWith,
     cartProd: cartProd,
