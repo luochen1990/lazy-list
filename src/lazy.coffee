@@ -1,105 +1,108 @@
 this_module = ({Symbol}) ->
 
-	# LazyList definition: nil, lazylist, iterator,
+	# LazyList definition: nil, LazyList, Iterator,
 
-	lazylist = (f) -> # construct a lazylist from a function.
+	LazyList = (f) -> # construct a LazyList from a function.
 		f[Symbol.iterator] = -> f()
 		f.toString = -> "LazyList"
 		return f
 
-	nil = lazylist -> nil # xs is empty <==> xs is nil or xs() is nil or xs()() is nil... <==> last xs is nil
+	nil = LazyList -> nil # xs is empty <==> xs is nil or xs() is nil or xs()() is nil... <==> last xs is nil
 	nil.toString = -> 'nil'
 
-	iterator = (it) -> # construct an iterator(which is a function with status) from a function.
+	Iterator = (it) -> # construct an Iterator(which is a function with status) from a function.
 		it.next = ->
 			r = it()
 			{value: r, done: r == nil}
 		it.toString = -> "Iterator"
 		return it
 
-	# lazylist constants: naturals, range, primes,
+	# LazyList constants: naturals, range, primes,
 
 	naturals =
-		lazylist ->
+		LazyList ->
 			i = -1
-			iterator ->
+			Iterator ->
 				++i
 
 	range = (args...) ->
 		if args.length == 0
 			naturals
 		else if args.length == 1
-			lazylist ->
+			LazyList ->
 				[stop] = args
 				i = -1
-				iterator ->
+				Iterator ->
 					if ++i < stop then i else nil
 		else if args.length == 2
-			lazylist ->
+			LazyList ->
 				[start, stop] = args
 				if start < stop
 					i = start - 1
-					iterator ->
+					Iterator ->
 						if ++i < stop then i else nil
 				else
 					i = start + 1
-					iterator ->
+					Iterator ->
 						if --i > stop then i else nil
 		else
-			lazylist ->
+			LazyList ->
 				[start, stop, step] = args
 				throw 'ERR IN range(): YOU ARE CREATING AN UNLIMITTED RANGE' if stop != start and (stop - start) * step < 0
 				i = start - step
 				if start < stop
-					iterator ->
+					Iterator ->
 						if (i += step) < stop then i else nil
 				else
-					iterator ->
+					Iterator ->
 						if (i += step) > stop then i else nil
 
-	primes = lazylist -> do
+	primes = LazyList -> do
 		filter((x) -> all((p) -> x % p != 0) takeWhile((p) -> p * p <= x) range(2, Infinity)) range(2, Infinity)
 
-	# lazylist producers: lazy, enumerate, iterate, random_gen, ranged_random_gen, permutation_gen,
+	# LazyList producers: lazy, enumerate, iterate, random_gen, ranged_random_gen, permutation_gen,
 
-	lazy = (arr) -> #make a lazylist from array or function
+	lazy = (arr) -> #make a LazyList from Function/LazyList/ES6Lazy/Array/String
 		if typeof arr is 'function'
-			lazylist arr
-		else if arr[Symbol.iterator]?
-			lazylist ->
+			if arr[Symbol.iterator]? #arr is LazyList
+				arr
+			else #arr is Function
+				LazyList arr
+		else if arr[Symbol.iterator]? #arr is ES6Lazy
+			LazyList ->
 				it = arr[Symbol.iterator]()
-				iterator ->
+				Iterator ->
 					r = it.next()
 					if r.done then nil else r.value
-		else #maybe Array or String
-			lazylist ->
+		else #arr is Array or String
+			LazyList ->
 				i = -1
-				iterator ->
+				Iterator ->
 					i += 1
 					if i < arr.length
 						arr[i]
 					else
 						nil
 
-	enumerate = (it) -> # iterator with index(with key for object)
+	enumerate = (it) -> # Iterator with index(with key for object)
 		if it[Symbol.iterator]? or it instanceof Array
 			zip(naturals, it)
 		else
-			lazylist ->
+			LazyList ->
 				keys = Object.keys(it)
 				i = -1
-				iterator ->
+				Iterator ->
 					if ++i < keys.length then [(k = keys[i]), it[k]] else nil
 
 	repeat = (x) -> # repeat x
-		lazylist ->
-			iterator ->
+		LazyList ->
+			Iterator ->
 				x
 
 	iterate = (next, init) -> #function next should not change it's argument
-		lazylist ->
+		LazyList ->
 			status = init
-			iterator ->
+			Iterator ->
 				last = status
 				status = next status
 				return last
@@ -138,26 +141,26 @@ this_module = ({Symbol}) ->
 			if arr.length == 0 then nil else
 				concat [arr[...]], takeWhile((ls) -> json(ls) != json(arr)) drop(1) iterate next_permutation, arr
 
-	# lazylist decorators: take, takeWhile, drop, dropWhile, cons, map, filter, scanl, streak, reverse,
+	# LazyList decorators: take, takeWhile, drop, dropWhile, cons, map, filter, scanl, streak, reverse,
 
 	take = (n) ->
 		(xs) ->
-			lazylist ->
+			LazyList ->
 				iter = (if typeof xs is 'function' then xs else lazy(xs))[Symbol.iterator]()
 				c = -1
-				iterator ->
+				Iterator ->
 					if ++c < n then iter() else nil
 
 	takeWhile = (ok) ->
 		(xs) ->
-			lazylist ->
+			LazyList ->
 				iter = (if typeof xs is 'function' then xs else lazy(xs))[Symbol.iterator]()
-				iterator ->
+				Iterator ->
 					if (x = iter()) isnt nil and ok(x) then x else nil
 
 	drop = (n) ->
 		(xs) ->
-			lazylist ->
+			LazyList ->
 				iter = (if typeof xs is 'function' then xs else lazy(xs))[Symbol.iterator]()
 				finished = false
 				(finished or= (iter() is nil); break if finished) for i in [0...n]
@@ -165,18 +168,18 @@ this_module = ({Symbol}) ->
 
 	dropWhile = (ok) ->
 		(xs) ->
-			lazylist ->
+			LazyList ->
 				iter = (if typeof xs is 'function' then xs else lazy(xs))[Symbol.iterator]()
 				null while ok(x = iter()) and x isnt nil
-				iterator ->
+				Iterator ->
 					[prevx, x] = [x, iter()]
 					return prevx
 
 	cons = (x) ->
 		(xs) ->
-			lazylist ->
+			LazyList ->
 				iter = null
-				iterator ->
+				Iterator ->
 					if iter is null
 						iter = (if typeof xs is 'function' then xs else lazy(xs))[Symbol.iterator]()
 						return x
@@ -185,34 +188,34 @@ this_module = ({Symbol}) ->
 
 	map = (f) ->
 		(xs) ->
-			lazylist ->
+			LazyList ->
 				iter = (if typeof xs is 'function' then xs else lazy(xs))[Symbol.iterator]()
-				iterator ->
+				Iterator ->
 					if (x = iter()) isnt nil then f(x) else nil
 
 	filter = (ok) ->
 		(xs) ->
-			lazylist ->
+			LazyList ->
 				iter = (if typeof xs is 'function' then xs else lazy(xs))[Symbol.iterator]()
-				iterator ->
+				Iterator ->
 					null while not ok(x = iter()) and x isnt nil
 					return x
 
 	scanl = (f, r) ->
 		(xs) ->
-			lazylist ->
+			LazyList ->
 				iter = (if typeof xs is 'function' then xs else lazy(xs))[Symbol.iterator]()
-				iterator ->
+				Iterator ->
 					got = r
 					r = if (x = iter()) isnt nil then f(r, x) else nil
 					return got
 
 	streak = (n) ->
 		(xs) ->
-			lazylist ->
+			LazyList ->
 				iter = (if typeof xs is 'function' then xs else lazy(xs))[Symbol.iterator]()
 				buf = []
-				iterator ->
+				Iterator ->
 					return nil if (x = iter()) is nil
 					buf.push(x)
 					buf.shift(1) if buf.length > n
@@ -222,13 +225,13 @@ this_module = ({Symbol}) ->
 		arr = if typeof xs is 'function' then list xs else copy xs
 		return lazy arr.reverse()
 
-	# lazylist combiners: concat, zip, zipWith, cartProd,
+	# LazyList combiners: concat, zip, zipWith, cartProd,
 
 	concat = (xss...) ->
-		lazylist ->
+		LazyList ->
 			iter = (if xss[0][Symbol.iterator]? then xss[0] else lazy(xss[0]))[Symbol.iterator]()
 			current_index = 0
-			iterator ->
+			Iterator ->
 				if (x = iter()) isnt nil
 					return x
 				else if (++current_index < xss.length)
@@ -244,9 +247,9 @@ this_module = ({Symbol}) ->
 			return false
 
 		zip = (xss...) ->
-			lazylist ->
+			LazyList ->
 				iters = ((if typeof xs is 'function' then xs else lazy(xs))[Symbol.iterator]() for xs in xss)
-				iterator ->
+				Iterator ->
 					next = (iter() for iter in iters)
 					if finished(next)
 						return nil
@@ -254,9 +257,9 @@ this_module = ({Symbol}) ->
 						return next
 
 		zipWith = (f) -> (xss...) ->
-			lazylist ->
+			LazyList ->
 				iters = ((if typeof xs is 'function' then xs else lazy(xs))[Symbol.iterator]() for xs in xss)
-				iterator ->
+				Iterator ->
 					next = (iter() for iter in iters)
 					if finished(next)
 						return nil
@@ -279,19 +282,19 @@ this_module = ({Symbol}) ->
 				(space[i][vec[i]] for i in [0...len])
 
 		(xss...) ->
-			lazylist ->
+			LazyList ->
 				xss = (list(xs) for xs in xss)
 				limits = (xss[i].length for i in [0...xss.length])
 				(return nil if len is 0) for len in limits
 				inc = inc_vector(limits)
 				get_value = apply_vector(xss)
 				v = (0 for i in [0...xss.length])
-				iterator ->
+				Iterator ->
 					if v[0] < limits[0] then (r = get_value v; inc v; r) else nil
 
-	# lazylist consumers: list, last, length, foldl, best, all, any, foreach,
+	# LazyList consumers: list, last, length, foldl, best, all, any, foreach,
 
-	list = (xs) -> #force list elements of the lazylist to get an array
+	list = (xs) -> #force list elements of the LazyList to get an array
 		if typeof xs is 'number'
 			n = xs
 			(xs) -> list take(n) xs
@@ -364,22 +367,22 @@ this_module = ({Symbol}) ->
 			value: brk
 
 	return {
-		# lazylist definition
-		nil, lazylist, iterator, Symbol,
+		# LazyList definition
+		nil, LazyList, Iterator, Symbol,
 
-		# lazylist constants
+		# LazyList constants
 		naturals, range, primes,
 
-		# lazylist producers
+		# LazyList producers
 		lazy, enumerate, repeat, iterate, random_gen, ranged_random_gen, permutation_gen,
 
-		# lazylist decorators
+		# LazyList decorators
 		cons, map, filter, take, takeWhile, drop, dropWhile, scanl, streak, reverse,
 
-		# lazylist combiners
+		# LazyList combiners
 		concat, zip, zipWith, cartProd,
 
-		# lazylist consumers
+		# LazyList consumers
 		list, last, length, foldl, best, all, any, foreach,
 	}
 

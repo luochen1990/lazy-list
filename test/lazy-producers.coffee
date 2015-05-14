@@ -2,7 +2,8 @@ describe 'producers', ->
 
 	describe 'lazy', ->
 		it 'given function works as alias of lazylist', ->
-			assertEq (-> last lazy -> do nil), -> nil
+			assert -> (lazy (-> do nil))[Symbol.iterator]?
+			assertEq (-> last lazy (-> do nil)), -> nil
 		it 'given array returns an iterator', ->
 			assertEq (-> last lazy []), -> nil
 			assert -> (lazy [1, 2, 3])[Symbol.iterator]?

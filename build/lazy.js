@@ -3,9 +3,9 @@ var this_module,
   slice = [].slice;
 
 this_module = function(arg) {
-  var Symbol, all, any, best, brk, cartProd, concat, cons, drop, dropWhile, enumerate, filter, foldl, foreach, iterate, iterator, last, lazy, lazylist, length, list, map, naturals, nil, permutation_gen, primes, random_gen, range, ranged_random_gen, ref, repeat, reverse, scanl, streak, take, takeWhile, zip, zipWith;
+  var Iterator, LazyList, Symbol, all, any, best, brk, cartProd, concat, cons, drop, dropWhile, enumerate, filter, foldl, foreach, iterate, last, lazy, length, list, map, naturals, nil, permutation_gen, primes, random_gen, range, ranged_random_gen, ref, repeat, reverse, scanl, streak, take, takeWhile, zip, zipWith;
   Symbol = arg.Symbol;
-  lazylist = function(f) {
+  LazyList = function(f) {
     f[Symbol.iterator] = function() {
       return f();
     };
@@ -14,13 +14,13 @@ this_module = function(arg) {
     };
     return f;
   };
-  nil = lazylist(function() {
+  nil = LazyList(function() {
     return nil;
   });
   nil.toString = function() {
     return 'nil';
   };
-  iterator = function(it) {
+  Iterator = function(it) {
     it.next = function() {
       var r;
       r = it();
@@ -34,10 +34,10 @@ this_module = function(arg) {
     };
     return it;
   };
-  naturals = lazylist(function() {
+  naturals = LazyList(function() {
     var i;
     i = -1;
-    return iterator(function() {
+    return Iterator(function() {
       return ++i;
     });
   });
@@ -47,11 +47,11 @@ this_module = function(arg) {
     if (args.length === 0) {
       return naturals;
     } else if (args.length === 1) {
-      return lazylist(function() {
+      return LazyList(function() {
         var i, stop;
         stop = args[0];
         i = -1;
-        return iterator(function() {
+        return Iterator(function() {
           if (++i < stop) {
             return i;
           } else {
@@ -60,12 +60,12 @@ this_module = function(arg) {
         });
       });
     } else if (args.length === 2) {
-      return lazylist(function() {
+      return LazyList(function() {
         var i, start, stop;
         start = args[0], stop = args[1];
         if (start < stop) {
           i = start - 1;
-          return iterator(function() {
+          return Iterator(function() {
             if (++i < stop) {
               return i;
             } else {
@@ -74,7 +74,7 @@ this_module = function(arg) {
           });
         } else {
           i = start + 1;
-          return iterator(function() {
+          return Iterator(function() {
             if (--i > stop) {
               return i;
             } else {
@@ -84,7 +84,7 @@ this_module = function(arg) {
         }
       });
     } else {
-      return lazylist(function() {
+      return LazyList(function() {
         var i, start, step, stop;
         start = args[0], stop = args[1], step = args[2];
         if (stop !== start && (stop - start) * step < 0) {
@@ -92,7 +92,7 @@ this_module = function(arg) {
         }
         i = start - step;
         if (start < stop) {
-          return iterator(function() {
+          return Iterator(function() {
             if ((i += step) < stop) {
               return i;
             } else {
@@ -100,7 +100,7 @@ this_module = function(arg) {
             }
           });
         } else {
-          return iterator(function() {
+          return Iterator(function() {
             if ((i += step) > stop) {
               return i;
             } else {
@@ -111,7 +111,7 @@ this_module = function(arg) {
       });
     }
   };
-  primes = lazylist(function() {
+  primes = LazyList(function() {
     return filter(function(x) {
       return all(function(p) {
         return x % p !== 0;
@@ -122,12 +122,16 @@ this_module = function(arg) {
   });
   lazy = function(arr) {
     if (typeof arr === 'function') {
-      return lazylist(arr);
+      if (arr[Symbol.iterator] != null) {
+        return arr;
+      } else {
+        return LazyList(arr);
+      }
     } else if (arr[Symbol.iterator] != null) {
-      return lazylist(function() {
+      return LazyList(function() {
         var it;
         it = arr[Symbol.iterator]();
-        return iterator(function() {
+        return Iterator(function() {
           var r;
           r = it.next();
           if (r.done) {
@@ -138,10 +142,10 @@ this_module = function(arg) {
         });
       });
     } else {
-      return lazylist(function() {
+      return LazyList(function() {
         var i;
         i = -1;
-        return iterator(function() {
+        return Iterator(function() {
           i += 1;
           if (i < arr.length) {
             return arr[i];
@@ -156,11 +160,11 @@ this_module = function(arg) {
     if ((it[Symbol.iterator] != null) || it instanceof Array) {
       return zip(naturals, it);
     } else {
-      return lazylist(function() {
+      return LazyList(function() {
         var i, keys;
         keys = Object.keys(it);
         i = -1;
-        return iterator(function() {
+        return Iterator(function() {
           var k;
           if (++i < keys.length) {
             return [(k = keys[i]), it[k]];
@@ -172,17 +176,17 @@ this_module = function(arg) {
     }
   };
   repeat = function(x) {
-    return lazylist(function() {
-      return iterator(function() {
+    return LazyList(function() {
+      return Iterator(function() {
         return x;
       });
     });
   };
   iterate = function(next, init) {
-    return lazylist(function() {
+    return LazyList(function() {
       var status;
       status = init;
-      return iterator(function() {
+      return Iterator(function() {
         var last;
         last = status;
         status = next(status);
@@ -247,11 +251,11 @@ this_module = function(arg) {
   })();
   take = function(n) {
     return function(xs) {
-      return lazylist(function() {
+      return LazyList(function() {
         var c, iter;
         iter = (typeof xs === 'function' ? xs : lazy(xs))[Symbol.iterator]();
         c = -1;
-        return iterator(function() {
+        return Iterator(function() {
           if (++c < n) {
             return iter();
           } else {
@@ -263,10 +267,10 @@ this_module = function(arg) {
   };
   takeWhile = function(ok) {
     return function(xs) {
-      return lazylist(function() {
+      return LazyList(function() {
         var iter;
         iter = (typeof xs === 'function' ? xs : lazy(xs))[Symbol.iterator]();
-        return iterator(function() {
+        return Iterator(function() {
           var x;
           if ((x = iter()) !== nil && ok(x)) {
             return x;
@@ -279,7 +283,7 @@ this_module = function(arg) {
   };
   drop = function(n) {
     return function(xs) {
-      return lazylist(function() {
+      return LazyList(function() {
         var finished, i, iter, j, ref;
         iter = (typeof xs === 'function' ? xs : lazy(xs))[Symbol.iterator]();
         finished = false;
@@ -301,13 +305,13 @@ this_module = function(arg) {
   };
   dropWhile = function(ok) {
     return function(xs) {
-      return lazylist(function() {
+      return LazyList(function() {
         var iter, x;
         iter = (typeof xs === 'function' ? xs : lazy(xs))[Symbol.iterator]();
         while (ok(x = iter()) && x !== nil) {
           null;
         }
-        return iterator(function() {
+        return Iterator(function() {
           var prevx, ref;
           ref = [x, iter()], prevx = ref[0], x = ref[1];
           return prevx;
@@ -317,10 +321,10 @@ this_module = function(arg) {
   };
   cons = function(x) {
     return function(xs) {
-      return lazylist(function() {
+      return LazyList(function() {
         var iter;
         iter = null;
-        return iterator(function() {
+        return Iterator(function() {
           if (iter === null) {
             iter = (typeof xs === 'function' ? xs : lazy(xs))[Symbol.iterator]();
             return x;
@@ -333,10 +337,10 @@ this_module = function(arg) {
   };
   map = function(f) {
     return function(xs) {
-      return lazylist(function() {
+      return LazyList(function() {
         var iter;
         iter = (typeof xs === 'function' ? xs : lazy(xs))[Symbol.iterator]();
-        return iterator(function() {
+        return Iterator(function() {
           var x;
           if ((x = iter()) !== nil) {
             return f(x);
@@ -349,10 +353,10 @@ this_module = function(arg) {
   };
   filter = function(ok) {
     return function(xs) {
-      return lazylist(function() {
+      return LazyList(function() {
         var iter;
         iter = (typeof xs === 'function' ? xs : lazy(xs))[Symbol.iterator]();
-        return iterator(function() {
+        return Iterator(function() {
           var x;
           while (!ok(x = iter()) && x !== nil) {
             null;
@@ -364,10 +368,10 @@ this_module = function(arg) {
   };
   scanl = function(f, r) {
     return function(xs) {
-      return lazylist(function() {
+      return LazyList(function() {
         var iter;
         iter = (typeof xs === 'function' ? xs : lazy(xs))[Symbol.iterator]();
-        return iterator(function() {
+        return Iterator(function() {
           var got, x;
           got = r;
           r = (x = iter()) !== nil ? f(r, x) : nil;
@@ -378,11 +382,11 @@ this_module = function(arg) {
   };
   streak = function(n) {
     return function(xs) {
-      return lazylist(function() {
+      return LazyList(function() {
         var buf, iter;
         iter = (typeof xs === 'function' ? xs : lazy(xs))[Symbol.iterator]();
         buf = [];
-        return iterator(function() {
+        return Iterator(function() {
           var x;
           if ((x = iter()) === nil) {
             return nil;
@@ -404,11 +408,11 @@ this_module = function(arg) {
   concat = function() {
     var xss;
     xss = 1 <= arguments.length ? slice.call(arguments, 0) : [];
-    return lazylist(function() {
+    return LazyList(function() {
       var current_index, iter;
       iter = (xss[0][Symbol.iterator] != null ? xss[0] : lazy(xss[0]))[Symbol.iterator]();
       current_index = 0;
-      return iterator(function() {
+      return Iterator(function() {
         var x;
         if ((x = iter()) !== nil) {
           return x;
@@ -436,7 +440,7 @@ this_module = function(arg) {
     zip = function() {
       var xss;
       xss = 1 <= arguments.length ? slice.call(arguments, 0) : [];
-      return lazylist(function() {
+      return LazyList(function() {
         var iters, xs;
         iters = (function() {
           var j, len1, results;
@@ -447,7 +451,7 @@ this_module = function(arg) {
           }
           return results;
         })();
-        return iterator(function() {
+        return Iterator(function() {
           var iter, next;
           next = (function() {
             var j, len1, results;
@@ -470,7 +474,7 @@ this_module = function(arg) {
       return function() {
         var xss;
         xss = 1 <= arguments.length ? slice.call(arguments, 0) : [];
-        return lazylist(function() {
+        return LazyList(function() {
           var iters, xs;
           iters = (function() {
             var j, len1, results;
@@ -481,7 +485,7 @@ this_module = function(arg) {
             }
             return results;
           })();
-          return iterator(function() {
+          return Iterator(function() {
             var iter, next;
             next = (function() {
               var j, len1, results;
@@ -535,7 +539,7 @@ this_module = function(arg) {
     return function() {
       var xss;
       xss = 1 <= arguments.length ? slice.call(arguments, 0) : [];
-      return lazylist(function() {
+      return LazyList(function() {
         var get_value, i, inc, j, len, len1, limits, v, xs;
         xss = (function() {
           var j, len1, results;
@@ -570,7 +574,7 @@ this_module = function(arg) {
           }
           return results;
         })();
-        return iterator(function() {
+        return Iterator(function() {
           var r;
           if (v[0] < limits[0]) {
             r = get_value(v);
@@ -712,8 +716,8 @@ this_module = function(arg) {
   });
   return {
     nil: nil,
-    lazylist: lazylist,
-    iterator: iterator,
+    LazyList: LazyList,
+    Iterator: Iterator,
     Symbol: Symbol,
     naturals: naturals,
     range: range,

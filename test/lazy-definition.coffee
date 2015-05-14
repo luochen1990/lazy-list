@@ -12,19 +12,19 @@ describe 'definition', ->
 		it 'nil() is nil', ->
 			assert -> nil() is nil
 
-	describe 'lazylist', ->
+	describe 'LazyList', ->
 		it 'gives funtions [Symbol.iterator]()', ->
-			assert -> (lazylist ->)[Symbol.iterator]?
-			assert -> typeof (lazylist ->)[Symbol.iterator] is 'function'
+			assert -> (LazyList ->)[Symbol.iterator]?
+			assert -> typeof (LazyList ->)[Symbol.iterator] is 'function'
 		it 'gives funtions .toString()', ->
-			assert -> (lazylist ->).toString?
-			assert -> typeof (lazylist ->).toString is 'function'
+			assert -> (LazyList ->).toString?
+			assert -> typeof (LazyList ->).toString is 'function'
 
-	describe 'iterator', ->
+	describe 'Iterator', ->
 		it 'gives funtions .next()', ->
-			assert -> (iterator ->).next?
-			assert -> typeof (iterator ->).next is 'function'
+			assert -> (Iterator ->).next?
+			assert -> typeof (Iterator ->).next is 'function'
 		it 'gives funtions .toString()', ->
-			assert -> (iterator ->).toString?
-			assert -> typeof (iterator ->).toString is 'function'
+			assert -> (Iterator ->).toString?
+			assert -> typeof (Iterator ->).toString is 'function'
 
