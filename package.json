@@ -1,6 +1,6 @@
 {
   "name": "lazy.coffee",
-  "version": "0.0.6",
+  "version": "0.1.0",
   "description": "CoffeeScript Lazy Evaluation",
   "author": "luochen1990",
   "license": "MIT",
@@ -17,7 +17,7 @@
     "haskell",
     "coffeescript"
   ],
-  "main": "./build/lazy.coffee.js",
+  "main": "./build/lazy.js",
   "scripts": {
     "test": "./node_modules/.bin/mocha"
   },

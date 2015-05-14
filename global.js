@@ -1,1 +1,1 @@
-require('./build/global.coffee.js');
+require('./build/global.js');
