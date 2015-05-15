@@ -1,5 +1,9 @@
 {log} = require 'coffee-mate'
-require '../build/global.coffee.js'
+
+Lz = require '../build/lazy.js'
+log -> Object.keys(Lz).join()
+
+require '../global.js'
 
 plus = (a, b) -> a + b
 fibs =
@@ -7,17 +11,13 @@ fibs =
 
 circle = (ls) ->
 	lazy -> do
-		concat ls, circle ls
+		concat(ls) circle ls
 
 reps = (x) ->
 	lazy -> do
 		cons(x) reps(x)
 
-#log -> list take(1000) circle [1]
+log -> last take(1000) circle [1, 2, 3, 4]
 log -> last take(1000) reps(1)
 log -> last take(20) fibs
-
-#fibs = lazy -> do
-#	concat [0, 1], (zipWith(plus) fibs, (drop(1) fibs))
-#
 

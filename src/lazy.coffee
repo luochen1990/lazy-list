@@ -405,3 +405,4 @@ this_module = ({Symbol}) ->
 
 module.exports = this_module
 	Symbol: Symbol ? {iterator: 'iter'}
+

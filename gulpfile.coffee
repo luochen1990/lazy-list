@@ -1,29 +1,15 @@
 require './helpers'
 
-build_target = ['global', 'lazy']
+build_lazy = coffee_builder('lazy')
+build_global = coffee_builder('global', standalone: '__lazy')
 
-gulp.task 'build-pretty', ['clean'], ->
-	for filename in build_target
-		gulp.src "src/#{filename}.coffee"
-			.pipe browserify()
-			.pipe rename "#{filename}.js"
-			.pipe sourcemaps.init loadMaps: true
-			.pipe sourcemaps.write './'
-			.pipe gulp.dest './build/'
-
-gulp.task 'build', ['clean', 'build-pretty'], ->
-	for filename in build_target
-		gulp.src "src/#{filename}.coffee"
-			.pipe browserify()
-			.pipe rename "#{filename}.min.js"
-			.pipe sourcemaps.init loadMaps: true
-			.pipe uglify()
-			.pipe sourcemaps.write './'
-			.pipe gulp.dest './build/'
-
-gulp.task 'clean', (done) -> del(['build/*'], done)
+gulp.task 'build', ['clean'], ->
+	build_lazy.build()
+	build_global.build()
 
 gulp.task 'watch', ['build'], ->
-	gulp.watch(paths.scripts, ['scripts'])
+	build_lazy.watch()
+	build_global.watch()
+#	gulp.watch 'src', ['build']
 
 gulp.task('default', ['build', 'watch'])
