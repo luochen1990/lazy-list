@@ -11,14 +11,6 @@ describe 'decorators', ->
 					cons(x) another_repeat(x)
 			assertEqOn(json) (-> list take(3) another_repeat(1)), (-> [1, 1, 1])
 
-	describe 'concat', ->
-		it 'concat(nil) nil returns empty', ->
-			assertEq (-> last concat(nil) nil), -> nil
-		it 'concat([1]) nil) returns lazy [1]', ->
-			assertEqOn(every_one) (-> concat([1]) nil), (-> [1])
-		it 'concat(nil) [1]) returns lazy [1]', ->
-			assertEqOn(every_one) (-> concat(nil) [1]), (-> [1])
-
 	describe 'map', ->
 		inc = (x) -> x + 1
 
@@ -92,10 +84,14 @@ describe 'decorators', ->
 	describe 'streak', ->
 		it 'streak(n) nil returns empty list', ->
 			assertEq (-> last streak(3) nil), -> nil
-		it 'streak(1) [0, 1, 2...] returns [[0], [1], [2]...]', ->
-			assertEqOn(json) (-> list take(3) streak(1) naturals), (-> [[0], [1], [2]])
-		it 'streak(2) [0, 1, 2...] returns [[0], [0, 1], [1, 2]...]', ->
-			assertEqOn(json) (-> list take(3) streak(2) naturals), (-> [[0], [0, 1], [1, 2]])
+		it 'streak(0) [0, 1, 2] returns []', ->
+			assertEqOn(json) (-> list streak(0) range(3)), (-> [])
+		it 'streak(1) [0, 1, 2] returns [[0], [1], [2]]', ->
+			assertEqOn(json) (-> list streak(1) range(3)), (-> [[0], [1], [2]])
+		it 'streak(2) [0, 1, 2] returns [[0, 1], [1, 2]]', ->
+			assertEqOn(json) (-> list streak(2) range(3)), (-> [[0, 1], [1, 2]])
+		it 'streak(3) [0, 1, 2] returns [[0, 1, 2]]', ->
+			assertEqOn(json) (-> list streak(3) range(3)), (-> [[0, 1, 2]])
 
 	describe 'reverse', ->
 		it 'given empty list returns empty list', ->

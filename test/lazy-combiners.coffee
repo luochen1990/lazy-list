@@ -1,17 +1,17 @@
 describe 'combiners', ->
 
-	describe 'join', ->
-		it 'join(nil) returns empty', ->
-			assertEq (-> last join nil), -> nil
-		it 'join([nil, nil]) returns empty', ->
-			assertEq (-> last join [nil, nil]), -> nil
-		it 'join([nil, xs]) returns xs', ->
-			assertEqOn(json) (-> list join [nil, [1, 2, 3]]), -> [1, 2, 3]
-			assertEqOn(json) (-> list join [nil, range(2)]), -> [0, 1]
-		it 'join([xs, ys]) returns [x ... y ...]', ->
-			assertEqOn(json) (-> list join [[1, 2, 3], [1, 2]]), -> [1, 2, 3, 1, 2]
-		it 'join([xs, ys, zs]) returns [x ... y ... z ...]', ->
-			assertEqOn(json) (-> list join [[1, 2, 3], [1, 2], [3, 4]]), -> [1, 2, 3, 1, 2, 3, 4]
+	describe 'concat', ->
+		it 'concat(nil) returns empty', ->
+			assertEq (-> last concat nil), -> nil
+		it 'concat([nil, nil]) returns empty', ->
+			assertEq (-> last concat [nil, nil]), -> nil
+		it 'concat([nil, xs]) returns xs', ->
+			assertEqOn(json) (-> list concat [nil, [1, 2, 3]]), -> [1, 2, 3]
+			assertEqOn(json) (-> list concat [nil, range(2)]), -> [0, 1]
+		it 'concat([xs, ys]) returns [x ... y ...]', ->
+			assertEqOn(json) (-> list concat [[1, 2, 3], [1, 2]]), -> [1, 2, 3, 1, 2]
+		it 'concat([xs, ys, zs]) returns [x ... y ... z ...]', ->
+			assertEqOn(json) (-> list concat [[1, 2, 3], [1, 2], [3, 4]]), -> [1, 2, 3, 1, 2, 3, 4]
 
 	describe 'zip', ->
 		it 'zip(nil) returns empty', ->

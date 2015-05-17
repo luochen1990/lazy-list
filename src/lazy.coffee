@@ -101,11 +101,11 @@ this_module = ({Symbol}) ->
 
 	iterate = (next, init) -> #function next should not change it's argument
 		LazyList ->
-			status = init
+			st = init
 			Iterator ->
-				last = status
-				status = next status
-				return last
+				r = st
+				st = next st
+				return r
 
 	random_gen = do ->
 		hash = (x) ->
@@ -141,7 +141,7 @@ this_module = ({Symbol}) ->
 			if arr.length == 0 then nil else
 				cons(arr[...]) takeWhile((ls) -> json(ls) != json(arr)) drop(1) iterate(next_permutation, arr)
 
-	# LazyList decorators: take, takeWhile, drop, dropWhile, cons, concat, map, filter, scanl, streak, reverse,
+	# LazyList decorators: take, takeWhile, drop, dropWhile, cons, map, filter, scanl, streak, reverse, sort, sortOn
 
 	take = (n) ->
 		(xs) ->
@@ -186,22 +186,6 @@ this_module = ({Symbol}) ->
 					else
 						return iter()
 
-	concat = (ws) ->
-		(xs) ->
-			LazyList ->
-				xs_unused = true
-				iter = lazy(ws)[Symbol.iterator]()
-				Iterator ->
-					if xs_unused
-						if (x = iter()) isnt nil
-							return x
-						else
-							iter = lazy(xs)[Symbol.iterator]()
-							xs_unused = false
-							return iter()
-					else
-						return iter()
-
 	map = (f) ->
 		(xs) ->
 			LazyList ->
@@ -226,24 +210,91 @@ this_module = ({Symbol}) ->
 					r = if (x = iter()) isnt nil then f(r, x) else nil
 					return got
 
-	streak = (n) ->
-		(xs) ->
-			LazyList ->
-				iter = lazy(xs)[Symbol.iterator]()
-				buf = []
-				Iterator ->
-					return nil if (x = iter()) is nil
-					buf.push(x)
-					buf.shift(1) if buf.length > n
-					return buf[...]
+	streak = (n) -> #NOTE: unstandard!
+		if n < 1
+			nil
+		else
+			(xs) ->
+				drop(n - 1) LazyList ->
+					iter = lazy(xs)[Symbol.iterator]()
+					buf = []
+					Iterator ->
+						return nil if (x = iter()) is nil
+						buf.push(x)
+						buf.shift(1) if buf.length > n
+						return buf[...]
 
-	reverse = (xs) ->
+	reverse = (xs) -> #NOTE: strict!
 		arr = list lazy(xs)
-		return lazy arr.reverse()
+		return arr.reverse()
 
-	# LazyList combiners: join, zip, zipWith, cartProd,
+	sort = (xs) -> #NOTE: strict!
+		arr = list lazy(xs)
+		return arr.sort()
 
-	join = (xss) ->
+	sortOn = (f) -> #NOTE: strict! # f :: (Comparable b) => a -> b
+		(xs) ->
+			arr = list lazy(xs)
+			return arr.sort((a, b) -> ((fa = f(a)) > (fb = f(b))) - (fa < fb))
+
+	# LazyList spliters: partition, group, groupBy, groupOn,
+
+	group = (xs) ->
+		LazyList ->
+			iter = lazy(xs)[Symbol.iterator]()
+			t = nil
+			x = iter()
+			Iterator ->
+				if x is nil
+					nil
+				else if x != t
+					t = x
+					LazyList ->
+						Iterator ->
+							if (r = x) == t
+								x = iter()
+								r
+							else
+								nil
+
+	groupBy = (eq) -> (xs) ->
+		LazyList ->
+			iter = lazy(xs)[Symbol.iterator]()
+			t = nil
+			x = iter()
+			Iterator ->
+				if x is nil
+					nil
+				else if not eq(x, t)
+					t = x
+					LazyList ->
+						Iterator ->
+							if eq((r = x), t)
+								x = iter()
+								r
+							else
+								nil
+
+	groupOn = (f) -> #NOTE: strict! # f :: (Hashable b) => a -> b
+		(xs) ->
+			memo = {}
+			foreach xs, (x) ->
+				y = f(x)
+				memo[y] ?= []
+				memo[y].push(x)
+			return (v for k, v of memo)
+
+	partition = (f) -> #NOTE: strict! # f :: a -> Bool
+		(xs) ->
+			memo = [[], []]
+			foreach xs, (x) ->
+				y = !f(x) + 0
+				memo[y].push(x)
+			return memo
+
+	# LazyList combiners: concat, zip, zipWith, cartProd,
+
+	concat = (xss) ->
 		LazyList ->
 			xs_iter = lazy(xss)[Symbol.iterator]()
 			xs = xs_iter()
@@ -309,7 +360,7 @@ this_module = ({Symbol}) ->
 				Iterator ->
 					if v[0] < limits[0] then (r = get_value v; inc v; r) else nil
 
-	# LazyList consumers: list, last, length, foldl, best, all, any, foreach,
+	# LazyList consumers: list, head, last, length, foldl, best, all, any, foreach,
 
 	list = (xs) -> #force list elements of the LazyList to get an array
 		if xs instanceof Array
@@ -325,6 +376,11 @@ this_module = ({Symbol}) ->
 			(xs) -> list take(n) xs
 		else
 			throw Error 'list(xs): xs is neither LazyList nor Array'
+
+	head = (xs) -> #returns nil if xs is empty
+		if not xs[Symbol.iterator]? then xs[0] ? nil else
+			iter = lazy(xs)[Symbol.iterator]()
+			return iter()
 
 	last = (xs) -> #returns nil if xs is empty
 		if not xs[Symbol.iterator]? then xs[xs.length - 1] ? nil else
@@ -394,13 +450,16 @@ this_module = ({Symbol}) ->
 		lazy, enumerate, repeat, iterate, random_gen, ranged_random_gen, permutation_gen,
 
 		# LazyList decorators
-		cons, concat, map, filter, take, takeWhile, drop, dropWhile, scanl, streak, reverse,
+		cons, map, filter, take, takeWhile, drop, dropWhile, scanl, streak, reverse, sort, sortOn,
+
+		# LazyList spliters
+		group, groupBy, groupOn, partition,
 
 		# LazyList combiners
-		join, zip, zipWith, cartProd,
+		concat, zip, zipWith, cartProd,
 
 		# LazyList consumers
-		list, last, length, foldl, best, all, any, foreach,
+		list, head, last, length, foldl, best, all, any, foreach,
 	}
 
 module.exports = this_module
