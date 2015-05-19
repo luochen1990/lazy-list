@@ -117,7 +117,7 @@ this_module = ({Symbol}) ->
 		seed = opts?.seed ? Math.random()
 		map((x) -> Math.floor(x * range)) random_gen(seed: seed)
 
-	permutation_gen = do ->
+	permutations = do ->
 		next_permutation = (x) ->
 			x = x[...]
 			l = x.length - 1
@@ -135,7 +135,8 @@ this_module = ({Symbol}) ->
 				--r
 			return x
 
-		(arr) ->
+		(xs) ->
+			arr = list xs
 			if arr.length == 0 then nil else
 				cons(arr[...]) takeWhile((ls) -> json(ls) != json(arr)) drop(1) iterate(next_permutation, arr)
 
@@ -450,7 +451,7 @@ this_module = ({Symbol}) ->
 		naturals, range, primes,
 
 		# LazyList producers
-		lazy, enumerate, repeat, iterate, random_gen, ranged_random_gen, permutation_gen,
+		lazy, enumerate, repeat, iterate, random_gen, ranged_random_gen, permutations,
 
 		# LazyList decorators
 		cons, map, filter, take, takeWhile, drop, dropWhile, scanl, streak, reverse, sort, sortOn,

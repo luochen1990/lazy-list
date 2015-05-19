@@ -67,17 +67,17 @@ describe 'producers', ->
 		it 'generate different sequences without given seed', ->
 			assert -> (json list take(10) ranged_random_gen(5)) isnt (json list take(10) ranged_random_gen(5))
 
-	describe 'permutation_gen', ->
+	describe 'permutations', ->
 		it 'given [] returns empty', ->
-			assertEq (-> last permutation_gen []), nil
+			assertEq (-> last permutations []), nil
 		it 'given [1] returns [[1]]', ->
-			assertEqOn(json) (-> list permutation_gen [1]), -> [[1]]
+			assertEqOn(json) (-> list permutations [1]), -> [[1]]
 		it 'given [1, 2] returns [[1, 2], [2, 1]]', ->
-			assertEqOn(json) (-> list permutation_gen [1, 2]), ->  [[1, 2], [2, 1]]
+			assertEqOn(json) (-> list permutations [1, 2]), ->  [[1, 2], [2, 1]]
 		it 'given [1, 1, 2] returns [[ 1, 1, 2 ], [ 1, 2, 1 ], [ 2, 1, 1 ]]', ->
-			#log -> json list permutation_gen [1, 1, 2]
-			assertEqOn(json) (-> list permutation_gen [1, 1, 2]), ->  [[1,1,2],[1,2,1],[2,1,1]]
+			#log -> json list permutations [1, 1, 2]
+			assertEqOn(json) (-> list permutations [1, 1, 2]), ->  [[1,1,2],[1,2,1],[2,1,1]]
 		it 'given [1, 3, 3, 1] returns ...', ->
-			#log -> json list permutation_gen [1, 3, 3, 1]
-			assertEqOn(json) (-> list permutation_gen [1, 3, 3, 1]), ->  [[1,3,3,1],[3,1,1,3],[3,1,3,1],[3,3,1,1],[1,1,3,3],[1,3,1,3]]
+			#log -> json list permutations [1, 3, 3, 1]
+			assertEqOn(json) (-> list permutations [1, 3, 3, 1]), ->  [[1,3,3,1],[3,1,1,3],[3,1,3,1],[3,3,1,1],[1,1,3,3],[1,3,1,3]]
 			

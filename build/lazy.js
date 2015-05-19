@@ -3,7 +3,7 @@ var this_module,
   slice = [].slice;
 
 this_module = function(arg) {
-  var Iterator, LazyList, Symbol, all, any, best, brk, cartProd, concat, cons, drop, dropWhile, enumerate, filter, foldl, foreach, group, groupBy, groupOn, head, iterate, last, lazy, length, list, map, naturals, nil, partition, permutation_gen, primes, random_gen, range, ranged_random_gen, ref, repeat, reverse, scanl, sort, sortOn, streak, take, takeWhile, zip, zipWith;
+  var Iterator, LazyList, Symbol, all, any, best, brk, cartProd, concat, cons, drop, dropWhile, enumerate, filter, foldl, foreach, group, groupBy, groupOn, head, iterate, last, lazy, length, list, map, naturals, nil, partition, permutations, primes, random_gen, range, ranged_random_gen, ref, repeat, reverse, scanl, sort, sortOn, streak, take, takeWhile, zip, zipWith;
   Symbol = arg.Symbol;
   LazyList = function(f) {
     f[Symbol.iterator] = function() {
@@ -217,7 +217,7 @@ this_module = function(arg) {
       seed: seed
     }));
   };
-  permutation_gen = (function() {
+  permutations = (function() {
     var next_permutation;
     next_permutation = function(x) {
       var l, m, r, ref, ref1;
@@ -241,7 +241,9 @@ this_module = function(arg) {
       }
       return x;
     };
-    return function(arr) {
+    return function(xs) {
+      var arr;
+      arr = list(xs);
       if (arr.length === 0) {
         return nil;
       } else {
@@ -859,7 +861,7 @@ this_module = function(arg) {
     iterate: iterate,
     random_gen: random_gen,
     ranged_random_gen: ranged_random_gen,
-    permutation_gen: permutation_gen,
+    permutations: permutations,
     cons: cons,
     map: map,
     filter: filter,
