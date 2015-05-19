@@ -41,31 +41,28 @@ describe 'producers', ->
 			fibs = map(([a, b]) -> a) iterate (([a, b]) -> [b, a + b]), [0, 1]
 			assertEqOn(json) (-> list take(8) fibs), -> [0, 1, 1, 2, 3, 5, 8, 13]
 
-	describe 'random_gen', ->
+	describe 'randoms', ->
 		it 'generate decimal numbers between [0, 1)', ->
-			assert -> all((x) -> 0 <= x < 1) take(100) random_gen()
-		it 'distributed reasonable', ->
-			assert -> any((x) -> 0.00 <= x < 0.33) take(100) random_gen()
-			assert -> any((x) -> 0.33 <= x < 0.66) take(100) random_gen()
-			assert -> any((x) -> 0.66 <= x < 1.00) take(100) random_gen()
-			assert -> all((x) -> 0 <= x < 1.00) take(100) random_gen()
-			assert -> all((x) -> 0 <= x < 1.00) take(100) random_gen(seed: 2)
+			assert -> all((x) -> 0 <= x < 1) take(100) randoms()
 		it 'generate the same sequence when given the same seed', ->
-			assertEqOn(json) (-> list take(10) random_gen(seed: 3)), (-> list take(10) random_gen(seed: 3))
-		it 'generate different sequences without given seed', ->
-			assert -> (json list take(10) random_gen()) isnt (json list take(10) random_gen())
-
-	describe 'ranged_random_gen', ->
-		it 'given n generate integers between [0, n)', ->
-			assert -> all((x) -> 0 <= x < 5) take(100) ranged_random_gen(5)
+			assertEqOn(json) (-> list take(10) randoms(seed: 3)), (-> list take(10) randoms(seed: 3))
+			assertEqOn(json) (-> list take(10) randoms(range: 5, seed: 3)), (-> list take(10) randoms(range: 5, seed: 3))
+		it 'given {range: n} generate integers between [0, n)', ->
+			assert -> all((x) -> 0 <= x < 5) take(100) randoms(range: 5)
+		it 'generate different sequences with different seed', ->
+			assert -> (json list take(10) randoms(1)) isnt (json list take(10) randoms(2))
+			assert -> (json list take(10) randoms(range: 5, seed: 1)) isnt (json list take(10) randoms(range: 5, seed: 2))
 		it 'distributed reasonable', ->
-			assert -> any((x) -> x is 0) take(100) ranged_random_gen(3)
-			assert -> any((x) -> x is 1) take(100) ranged_random_gen(3)
-			assert -> any((x) -> x is 2) take(100) ranged_random_gen(3)
-		it 'generate the same sequence when given the same seed', ->
-			assertEqOn(json) (-> list take(10) ranged_random_gen(5, seed: 3)), (-> list take(10) ranged_random_gen(5, seed: 3))
-		it 'generate different sequences without given seed', ->
-			assert -> (json list take(10) ranged_random_gen(5)) isnt (json list take(10) ranged_random_gen(5))
+			assert -> any((x) -> 0.00 <= x < 0.33) take(100) randoms()
+			assert -> any((x) -> 0.33 <= x < 0.66) take(100) randoms()
+			assert -> any((x) -> 0.66 <= x < 1.00) take(100) randoms()
+			assert -> all((x) -> 0 <= x < 1.00) take(100) randoms()
+			assert -> all((x) -> 0 <= x < 1.00) take(100) randoms(seed: 2)
+			assert -> any((x) -> x is 0) take(100) randoms(range: 3)
+			assert -> any((x) -> x is 1) take(100) randoms(range: 3)
+			assert -> any((x) -> x is 2) take(100) randoms(range: 3)
+			assert -> any((x) -> x is 1) take(100) randoms(range: [1, 2])
+			assert -> any((x) -> x is 2) take(100) randoms(range: [1, 2])
 
 	describe 'permutations', ->
 		it 'given [] returns empty', ->

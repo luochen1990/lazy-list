@@ -18,7 +18,7 @@ var this_module,
   slice = [].slice;
 
 this_module = function(arg) {
-  var Iterator, LazyList, Symbol, all, any, best, brk, cartProd, concat, cons, drop, dropWhile, enumerate, filter, foldl, foreach, group, groupBy, groupOn, head, iterate, last, lazy, length, list, map, naturals, nil, partition, permutations, primes, random_gen, range, ranged_random_gen, ref, repeat, reverse, scanl, sort, sortOn, streak, take, takeWhile, zip, zipWith;
+  var Iterator, LazyList, Symbol, all, any, best, brk, cartProd, concat, cons, drop, dropWhile, enumerate, filter, foldl, foreach, group, groupBy, groupOn, head, iterate, last, lazy, length, list, map, naturals, nil, partition, permutations, primes, randoms, range, ref, repeat, reverse, scanl, sort, sortOn, streak, take, takeWhile, zip, zipWith;
   Symbol = arg.Symbol;
   LazyList = function(f) {
     f[Symbol.iterator] = function() {
@@ -211,27 +211,43 @@ this_module = function(arg) {
       });
     });
   };
-  random_gen = (function() {
-    var hash;
+  randoms = (function() {
+    var hash, normal, salt;
+    salt = Math.PI / 3.0;
     hash = function(x) {
-      x = Math.sin(x) * 1e4;
+      x = Math.sin(x + salt) * 1e4;
       return x - Math.floor(x);
     };
+    normal = function(seed) {
+      return iterate(hash, hash(seed));
+    };
     return function(opts) {
-      var ref, seed;
-      seed = hash((ref = opts != null ? opts.seed : void 0) != null ? ref : Math.random());
-      return iterate(hash, seed);
+      var k, ref, ref1, s, seed;
+      if (opts == null) {
+        opts = 0;
+      }
+      if (typeof opts === 'number') {
+        return normal(opts);
+      } else {
+        seed = (ref = opts.seed) != null ? ref : 0;
+        range = opts.range;
+        if (range != null) {
+          if (typeof range === 'number') {
+            return map(function(x) {
+              return Math.floor(x * range);
+            })(normal(seed));
+          } else {
+            ref1 = [range[0], range[1] - range[0] + 1], s = ref1[0], k = ref1[1];
+            return map(function(x) {
+              return s + Math.floor(x * k);
+            })(normal(seed));
+          }
+        } else {
+          return normal(seed);
+        }
+      }
     };
   })();
-  ranged_random_gen = function(range, opts) {
-    var ref, seed;
-    seed = (ref = opts != null ? opts.seed : void 0) != null ? ref : Math.random();
-    return map(function(x) {
-      return Math.floor(x * range);
-    })(random_gen({
-      seed: seed
-    }));
-  };
   permutations = (function() {
     var next_permutation;
     next_permutation = function(x) {
@@ -874,8 +890,7 @@ this_module = function(arg) {
     enumerate: enumerate,
     repeat: repeat,
     iterate: iterate,
-    random_gen: random_gen,
-    ranged_random_gen: ranged_random_gen,
+    randoms: randoms,
     permutations: permutations,
     cons: cons,
     map: map,

@@ -60,7 +60,7 @@ this_module = ({Symbol}) ->
 	primes = LazyList -> do
 		filter((x) -> all((p) -> x % p != 0) takeWhile((p) -> p * p <= x) range(2, Infinity)) range(2, Infinity)
 
-	# LazyList producers: lazy, enumerate, iterate, random_gen, ranged_random_gen, permutation_gen,
+	# LazyList producers: lazy, enumerate, iterate, randoms, permutations,
 
 	lazy = (xs) -> #make a LazyList from Function/LazyList/Array/String/ES6Lazy
 		if typeof xs is 'function'
@@ -105,17 +105,29 @@ this_module = ({Symbol}) ->
 				st = next st
 				return r
 
-	random_gen = do ->
-		hash = (x) ->
-			x = Math.sin(x) * 1e4
-			x - Math.floor(x)
-		(opts) ->
-			seed = hash(opts?.seed ? Math.random())
-			iterate hash, seed
+	randoms = do -> #NOTE: unstandard!
+		salt = Math.PI / 3.0
 
-	ranged_random_gen = (range, opts) ->
-		seed = opts?.seed ? Math.random()
-		map((x) -> Math.floor(x * range)) random_gen(seed: seed)
+		hash = (x) ->
+			x = Math.sin(x + salt) * 1e4
+			x - Math.floor(x)
+
+		normal = (seed) -> iterate hash, hash(seed)
+
+		(opts = 0) ->
+			if typeof opts is 'number'
+				normal(opts)
+			else
+				seed = opts.seed ? 0
+				range = opts.range
+				if range?
+					if typeof range is 'number'
+						map((x) -> Math.floor(x * range)) normal(seed)
+					else
+						[s, k] = [range[0], range[1] - range[0] + 1]
+						map((x) -> s + Math.floor(x * k)) normal(seed)
+				else
+					normal(seed)
 
 	permutations = do ->
 		next_permutation = (x) ->
@@ -451,7 +463,7 @@ this_module = ({Symbol}) ->
 		naturals, range, primes,
 
 		# LazyList producers
-		lazy, enumerate, repeat, iterate, random_gen, ranged_random_gen, permutations,
+		lazy, enumerate, repeat, iterate, randoms, permutations,
 
 		# LazyList decorators
 		cons, map, filter, take, takeWhile, drop, dropWhile, scanl, streak, reverse, sort, sortOn,
