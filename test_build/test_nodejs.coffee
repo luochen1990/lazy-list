@@ -11,7 +11,7 @@ fibs =
 
 circle = (ls) ->
 	lazy -> do
-		concat(ls) circle ls
+		concat [ls, circle ls]
 
 reps = (x) ->
 	lazy -> do
@@ -20,4 +20,6 @@ reps = (x) ->
 log -> last take(1000) circle [1, 2, 3, 4]
 log -> last take(1000) reps(1)
 log -> last take(20) fibs
+log -> last []
+log -> head []
 

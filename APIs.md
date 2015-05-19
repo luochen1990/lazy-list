@@ -5,8 +5,8 @@ Definition
 ----------
 
 [`nil`]()
-[`lazylist`]()
-[`iterator`]()
+[`LazyList`]()
+[`Iterator`]()
 
 Constants
 ---------
@@ -22,9 +22,8 @@ Producers
 [`enumerate`]()
 [`repeat`]()
 [`iterate`]()
-[`random_gen`]()
-[`ranged_random_gen`]()
-[`permutation_gen`]()
+[`randoms`]()
+[`permutations`]()
 
 Decorators
 ----------
@@ -39,6 +38,16 @@ Decorators
 [`scanl`]()
 [`streak`]()
 [`reverse`]()
+[`sort`]()
+[`sortOn`]()
+
+Spliters
+--------
+
+[`group`]()
+[`groupBy`]()
+[`groupOn`]()
+[`partition`]()
 
 Combiners
 ---------
@@ -52,6 +61,7 @@ Consumers
 ---------
 
 [`list`]()
+[`head`]()
 [`last`]()
 [`length`]()
 [`foldl`]()

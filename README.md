@@ -5,40 +5,40 @@ A lazy javascript library for Haskell & FP(Functional Programming) lovers.
 
 - better performance.
 - well named and designed helper functions.
-- allowing recursive lazylist definition.
-- almost no gap between normal Array and lazylist.
+- allowing recursive LazyList definition.
+- almost no gap between normal Array and LazyList.
 - includes useful things like random_gen, permutation_gen, cartProd.
 - fully tested.
 - use it without CoffeeScript is also ok.
-- ES6 supported. (you can use the for...of syntax to enumerate an lazylist)
+- ES6 supported. (you can use the for...of syntax to enumerate an LazyList)
 
 Conceptions
 -----------
 
 Here explained the core conceptions of lazy.coffee. you can find [**APIs' descriptions and demo** here](APIs.md)
 
-### nil, lazylist, iterator
+### nil, LazyList, Iterator
 
-these three concepts gives the core definition of lazylist.
+these three concepts gives the core definition of LazyList.
 
-- *iterator* is a function which keeps status in it's closure, everytime you call an iterator may got different return values.
-- *lazylist* is almost a list except it is lazy evaluated. you can call the `.iter()` method to get a new iterator of a lazylist.
-- `nil` is both an empty list and the end sign of a lazylist.
-- the function `lazylist` is used to define a lazylist from a without-argument-function which returns an iterator.
-- the function `iterator` is used to get an iterator from a without-argument-function which keeps status in it's closure. the `.next()` method is provided to support ES6 standard.
+- *Iterator* is a function which keeps status in it's closure, everytime you call an Iterator may got different return values.
+- *LazyList* is almost a list except it is lazy evaluated. you can call the `.iter()` method to get a new Iterator of a LazyList.
+- `nil` is both an empty list and the end sign of a LazyList.
+- the function `LazyList` is used to define a LazyList from a without-argument-function which returns an Iterator.
+- the function `Iterator` is used to get an Iterator from a without-argument-function which keeps status in it's closure. the `.next()` method is provided to support ES6 standard.
 
 ### constants/producers, decorators/combiners, consumers
 
-- *constants* and *producers* is provided to get most used lazylists.
-- *decorators* and *combiners* is provided to get new lazylist from existing lazylists.
-- *consumers* is provided to get some normal value or side effects via enumerating a lazylist.
+- *constants* and *producers* is provided to get most used LazyLists.
+- *decorators* and *combiners* is provided to get new LazyList from existing LazyLists.
+- *consumers* is provided to get some normal value or side effects via enumerating a LazyList.
 
 Most Possible Abuse
 -------------------
 
 ### use `map` to do side effect.
 
-you should **never** do side effect in the argument function of `map` or any other decorators/combiners. if you want to enumerate a lazylist to do something, `foreach` is exactly what you want.
+you should **never** do side effect in the argument function of `map` or any other decorators/combiners. if you want to enumerate a LazyList to do something, `foreach` is exactly what you want.
 
 ie. lots of people used to do things like this:
 
@@ -55,13 +55,13 @@ foreach range(10), (x) ->
 	console.log x
 ```
 
-The abuse of `map` will make thing unclear since `map` is designed to return a lazylist and changes nothing else. Actually the `map` one won't work since the mapping function is not called immediately.
+The abuse of `map` will make thing unclear since `map` is designed to return a LazyList and changes nothing else. Actually the `map` one won't work since the mapping function is not called immediately.
 
-And `foreach` is designed to enumerate items in a lazylist and do side effects in it's callback function.
+And `foreach` is designed to enumerate items in a LazyList and do side effects in it's callback function.
 
 Do right things in right way keeps bugs away.
 
-### use recursive definitions of lazylist everywhere
+### use recursive definitions of LazyList everywhere
 
 Actually this is not mistake of users. But it is still not recommended to use recursive definitions frequently. Since there is neither graph reduction optimization in lazy.coffee nor tail call optimization in javascript. the performance of recursive programs is a big problem here.
 

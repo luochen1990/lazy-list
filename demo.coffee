@@ -7,7 +7,7 @@ fibs =
 
 circle = (ls) ->
 	lazy -> do
-		concat ls, circle ls
+		concat [ls, circle ls]
 
 reps = (x) ->
 	lazy -> do

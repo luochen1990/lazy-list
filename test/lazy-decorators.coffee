@@ -100,3 +100,18 @@ describe 'decorators', ->
 		it 'reverse [0..4] returns [4..0]', ->
 			assertEqOn(json) (-> list reverse range(5)), (-> [4, 3, 2, 1, 0])
 
+	describe 'sort', ->
+		it 'given [] returns []', ->
+			assertEq (-> last sort nil), -> nil
+		it 'sort numbers correctly', ->
+			assertEqOn(every_one) (-> sort [1, 3, 4, 2, 2]), (-> [1, 2, 2, 3, 4])
+
+	describe 'sortOn', ->
+		identity = (x) -> x
+		negative = (x) -> -x
+
+		it 'given [] returns []', ->
+			assertEq (-> last sortOn(identity) nil), -> nil
+		it 'sort numbers correctly', ->
+			assertEqOn(every_one) (-> sortOn(negative) [1, 3, 4, 2, 2]), (-> [4, 3, 2, 2, 1])
+
