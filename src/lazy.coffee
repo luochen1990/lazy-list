@@ -62,27 +62,25 @@ this_module = ({Symbol}) ->
 
 	# LazyList producers: lazy, enumerate, iterate, random_gen, ranged_random_gen, permutation_gen,
 
-	lazy = (arr) -> #make a LazyList from Function/LazyList/ES6Lazy/Array/String
-		if typeof arr is 'function'
-			if arr[Symbol.iterator]? #arr is LazyList
-				arr
-			else #arr is Function
-				LazyList arr
-		else if arr[Symbol.iterator]? #arr is ES6Lazy
-			LazyList ->
-				it = arr[Symbol.iterator]()
-				Iterator ->
-					r = it.next()
-					if r.done then nil else r.value
-		else #arr is Array or String
+	lazy = (xs) -> #make a LazyList from Function/LazyList/Array/String/ES6Lazy
+		if typeof xs is 'function'
+			if xs[Symbol.iterator]? #xs is LazyList
+				xs
+			else #xs is Function
+				LazyList xs
+		else if xs.constructor in [Array, String] #xs is Array or String
 			LazyList ->
 				i = -1
 				Iterator ->
-					i += 1
-					if i < arr.length
-						arr[i]
-					else
-						nil
+					if (++i) < xs.length then xs[i] else nil
+		else if xs[Symbol.iterator]? #xs is ES6Lazy
+			LazyList ->
+				it = xs[Symbol.iterator]()
+				Iterator ->
+					r = it.next()
+					if r.done then nil else r.value
+		else
+			throw Error 'lazy(xs): xs is neither Array nor Iterable'
 
 	enumerate = (it) -> # Iterator with index(with key for object)
 		if it[Symbol.iterator]? or it instanceof Array
@@ -224,9 +222,14 @@ this_module = ({Symbol}) ->
 						buf.shift(1) if buf.length > n
 						return buf[...]
 
-	reverse = (xs) -> #NOTE: strict!
-		arr = list lazy(xs)
-		return arr.reverse()
+	reverse = (xs) ->
+		if xs.constructor in [Array, String] #xs is Array or String
+			LazyList ->
+				i = xs.length
+				Iterator ->
+					if (--i) >= 0 then xs[i] else nil
+		else #NOTE: strict!
+			list(lazy(xs)).reverse()
 
 	sort = (xs) -> #NOTE: strict!
 		arr = list lazy(xs)
@@ -375,22 +378,22 @@ this_module = ({Symbol}) ->
 			n = xs
 			(xs) -> list take(n) xs
 		else
-			throw Error 'list(xs): xs is neither LazyList nor Array'
+			throw Error 'list(xs): xs is neither Array nor Iterable'
 
 	head = (xs) -> #returns nil if xs is empty
-		if not xs[Symbol.iterator]? then xs[0] ? nil else
+		if xs.constructor in [Array, String] then xs[0] ? nil else
 			iter = lazy(xs)[Symbol.iterator]()
 			return iter()
 
 	last = (xs) -> #returns nil if xs is empty
-		if not xs[Symbol.iterator]? then xs[xs.length - 1] ? nil else
+		if xs.constructor in [Array, String] then xs[xs.length - 1] ? nil else
 			iter = lazy(xs)[Symbol.iterator]()
 			r = nil
 			r = x while (x = iter()) isnt nil
 			return r
 
 	length = (xs) ->
-		if not xs[Symbol.iterator]? then xs.length else
+		if xs.constructor in [Array, String] then xs.length else
 			iter = lazy(xs)[Symbol.iterator]()
 			r = 0
 			++r while (x = iter()) isnt nil

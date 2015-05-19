@@ -120,17 +120,30 @@ this_module = function(arg) {
       })(range(2, Infinity)));
     })(range(2, Infinity))();
   });
-  lazy = function(arr) {
-    if (typeof arr === 'function') {
-      if (arr[Symbol.iterator] != null) {
-        return arr;
+  lazy = function(xs) {
+    var ref;
+    if (typeof xs === 'function') {
+      if (xs[Symbol.iterator] != null) {
+        return xs;
       } else {
-        return LazyList(arr);
+        return LazyList(xs);
       }
-    } else if (arr[Symbol.iterator] != null) {
+    } else if ((ref = xs.constructor) === Array || ref === String) {
+      return LazyList(function() {
+        var i;
+        i = -1;
+        return Iterator(function() {
+          if ((++i) < xs.length) {
+            return xs[i];
+          } else {
+            return nil;
+          }
+        });
+      });
+    } else if (xs[Symbol.iterator] != null) {
       return LazyList(function() {
         var it;
-        it = arr[Symbol.iterator]();
+        it = xs[Symbol.iterator]();
         return Iterator(function() {
           var r;
           r = it.next();
@@ -142,18 +155,7 @@ this_module = function(arg) {
         });
       });
     } else {
-      return LazyList(function() {
-        var i;
-        i = -1;
-        return Iterator(function() {
-          i += 1;
-          if (i < arr.length) {
-            return arr[i];
-          } else {
-            return nil;
-          }
-        });
-      });
+      throw Error('lazy(xs): xs is neither Array nor Iterable');
     }
   };
   enumerate = function(it) {
@@ -405,9 +407,22 @@ this_module = function(arg) {
     }
   };
   reverse = function(xs) {
-    var arr;
-    arr = list(lazy(xs));
-    return arr.reverse();
+    var ref;
+    if ((ref = xs.constructor) === Array || ref === String) {
+      return LazyList(function() {
+        var i;
+        i = xs.length;
+        return Iterator(function() {
+          if ((--i) >= 0) {
+            return xs[i];
+          } else {
+            return nil;
+          }
+        });
+      });
+    } else {
+      return list(lazy(xs)).reverse();
+    }
   };
   sort = function(xs) {
     var arr;
@@ -718,22 +733,22 @@ this_module = function(arg) {
         return list(take(n)(xs));
       };
     } else {
-      throw Error('list(xs): xs is neither LazyList nor Array');
+      throw Error('list(xs): xs is neither Array nor Iterable');
     }
   };
   head = function(xs) {
-    var iter, ref1;
-    if (xs[Symbol.iterator] == null) {
-      return (ref1 = xs[0]) != null ? ref1 : nil;
+    var iter, ref1, ref2;
+    if ((ref1 = xs.constructor) === Array || ref1 === String) {
+      return (ref2 = xs[0]) != null ? ref2 : nil;
     } else {
       iter = lazy(xs)[Symbol.iterator]();
       return iter();
     }
   };
   last = function(xs) {
-    var iter, r, ref1, x;
-    if (xs[Symbol.iterator] == null) {
-      return (ref1 = xs[xs.length - 1]) != null ? ref1 : nil;
+    var iter, r, ref1, ref2, x;
+    if ((ref1 = xs.constructor) === Array || ref1 === String) {
+      return (ref2 = xs[xs.length - 1]) != null ? ref2 : nil;
     } else {
       iter = lazy(xs)[Symbol.iterator]();
       r = nil;
@@ -744,8 +759,8 @@ this_module = function(arg) {
     }
   };
   length = function(xs) {
-    var iter, r, x;
-    if (xs[Symbol.iterator] == null) {
+    var iter, r, ref1, x;
+    if ((ref1 = xs.constructor) === Array || ref1 === String) {
       return xs.length;
     } else {
       iter = lazy(xs)[Symbol.iterator]();
