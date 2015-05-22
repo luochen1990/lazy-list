@@ -222,22 +222,21 @@ this_module = function(arg) {
       return iterate(hash, hash(seed));
     };
     return function(opts) {
-      var k, ref, ref1, s, seed;
+      var k, ref, ref1, rg, s, seed;
       if (opts == null) {
-        opts = 0;
-      }
-      if (typeof opts === 'number') {
+        return normal(0);
+      } else if (typeof opts === 'number') {
         return normal(opts);
       } else {
         seed = (ref = opts.seed) != null ? ref : 0;
-        range = opts.range;
-        if (range != null) {
-          if (typeof range === 'number') {
+        rg = opts.range;
+        if (rg != null) {
+          if (typeof rg === 'number') {
             return map(function(x) {
-              return Math.floor(x * range);
+              return Math.floor(x * rg);
             })(normal(seed));
           } else {
-            ref1 = [range[0], range[1] - range[0] + 1], s = ref1[0], k = ref1[1];
+            ref1 = [rg[0], rg[1] - rg[0] + 1], s = ref1[0], k = ref1[1];
             return map(function(x) {
               return s + Math.floor(x * k);
             })(normal(seed));

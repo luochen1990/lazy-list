@@ -112,19 +112,22 @@ this_module = ({Symbol}) ->
 			x = Math.sin(x + salt) * 1e4
 			x - Math.floor(x)
 
+
 		normal = (seed) -> iterate hash, hash(seed)
 
-		(opts = 0) ->
-			if typeof opts is 'number'
+		(opts) ->
+			if not opts?
+				normal(0)
+			else if typeof opts is 'number'
 				normal(opts)
 			else
 				seed = opts.seed ? 0
-				range = opts.range
-				if range?
-					if typeof range is 'number'
-						map((x) -> Math.floor(x * range)) normal(seed)
+				rg = opts.range
+				if rg?
+					if typeof rg is 'number'
+						map((x) -> Math.floor(x * rg)) normal(seed)
 					else
-						[s, k] = [range[0], range[1] - range[0] + 1]
+						[s, k] = [rg[0], rg[1] - rg[0] + 1]
 						map((x) -> s + Math.floor(x * k)) normal(seed)
 				else
 					normal(seed)

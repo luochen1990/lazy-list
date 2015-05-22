@@ -52,6 +52,10 @@ describe 'producers', ->
 		it 'generate different sequences with different seed', ->
 			assert -> (json list take(10) randoms(1)) isnt (json list take(10) randoms(2))
 			assert -> (json list take(10) randoms(range: 5, seed: 1)) isnt (json list take(10) randoms(range: 5, seed: 2))
+		it 'zipped correctly', ->
+			assert -> all((x) -> not isNaN x) head zip randoms(range: 14, seed: 1), randoms(4)
+			assert -> all((x) -> not isNaN x) head zip randoms(range: 14, seed: 1), randoms(seed: 4)
+			assert -> all((x) -> not isNaN x) head zip randoms(range: 14, seed: 1), randoms(range: 14, seed: 1)
 		it 'distributed reasonable', ->
 			assert -> any((x) -> 0.00 <= x < 0.33) take(100) randoms()
 			assert -> any((x) -> 0.33 <= x < 0.66) take(100) randoms()
