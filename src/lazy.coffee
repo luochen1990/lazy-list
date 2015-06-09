@@ -212,7 +212,7 @@ this_module = ({Symbol}) ->
 			LazyList ->
 				iter = lazy(xs)[Symbol.iterator]()
 				Iterator ->
-					null while not ok(x = iter()) and x isnt nil
+					null while (x = iter()) isnt nil and not ok(x)
 					return x
 
 	scanl = (f, r) ->

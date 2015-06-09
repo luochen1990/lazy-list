@@ -377,7 +377,7 @@ this_module = function(arg) {
         iter = lazy(xs)[Symbol.iterator]();
         return Iterator(function() {
           var x;
-          while (!ok(x = iter()) && x !== nil) {
+          while ((x = iter()) !== nil && !ok(x)) {
             null;
           }
           return x;

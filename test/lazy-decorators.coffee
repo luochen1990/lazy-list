@@ -33,6 +33,11 @@ describe 'decorators', ->
 			assertEq (-> last filter(positive) [-1, -2, -3]), (-> nil)
 			assertEqOn(every_one) (-> filter(positive) [1, 2, -3, 4, -5, 6]), (-> [1, 2, 4, 6])
 			assertEqOn(every_one) (-> filter(positive) [1, 2, 3]), (-> [1, 2, 3])
+		it 'do nothing with nil', ->
+			r = []
+			ls = list filter((x) -> (r.push x); true) range(2)
+			assert -> r.length == 2
+			assertEqOn(every_one) (-> r), (-> [0, 1])
 
 	describe 'take', ->
 		it '(take(0) xs) returns empty list', ->
