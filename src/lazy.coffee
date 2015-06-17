@@ -396,10 +396,18 @@ this_module = ({Symbol}) ->
 		else
 			throw Error 'list(xs): xs is neither Array nor Iterable'
 
-	head = (xs) -> #returns nil if xs is empty
-		if xs.constructor in [Array, String] then xs[0] ? nil else
+	head = (xs) -> #returns error if xs is empty
+		if xs.constructor in [Array, String]
+			if xs.length > 0
+				return xs[0]
+			else
+				throw "Error: head() used on empty list."
+		else
 			iter = lazy(xs)[Symbol.iterator]()
-			return iter()
+			if (r = iter()) isnt nil
+				return r
+			else
+				throw "Error: head() used on empty list."
 
 	last = (xs) -> #returns nil if xs is empty
 		if xs.constructor in [Array, String] then xs[xs.length - 1] ? nil else

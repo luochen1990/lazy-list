@@ -754,12 +754,20 @@ this_module = function(arg) {
     }
   };
   head = function(xs) {
-    var iter, ref1, ref2;
+    var iter, r, ref1;
     if ((ref1 = xs.constructor) === Array || ref1 === String) {
-      return (ref2 = xs[0]) != null ? ref2 : nil;
+      if (xs.length > 0) {
+        return xs[0];
+      } else {
+        throw "Error: head() used on empty list.";
+      }
     } else {
       iter = lazy(xs)[Symbol.iterator]();
-      return iter();
+      if ((r = iter()) !== nil) {
+        return r;
+      } else {
+        throw "Error: head() used on empty list.";
+      }
     }
   };
   last = function(xs) {
