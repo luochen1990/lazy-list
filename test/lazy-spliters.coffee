@@ -1,6 +1,6 @@
 describe 'spliters', ->
 
-	describe 'group', ->
+	xdescribe 'group', ->
 		it 'given [] or nil returns nil', ->
 			assertEq (-> last group nil), (-> nil)
 		it 'given [1, 2, 3, 3, 1] returns [[1], [2], [3, 3], [1]]', ->
@@ -10,7 +10,7 @@ describe 'spliters', ->
 		xit 'given [1, 2, 3, 1, 1] on map(head) returns [1, 2, 3, 1]', ->
 			assertEqOn(json) (-> list map(head) group [1, 2, 3, 1, 1]), (-> [1, 2, 3, 1])
 
-	describe 'groupBy', ->
+	xdescribe 'groupBy', ->
 		sameParity = (a, b) -> a % 2 == b % 2
 
 		it 'with sameParity, given [] or nil returns nil', ->

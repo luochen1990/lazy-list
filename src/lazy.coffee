@@ -256,43 +256,7 @@ this_module = ({Symbol}) ->
 			arr = list lazy(xs)
 			return arr.sort((a, b) -> ((fa = f(a)) > (fb = f(b))) - (fa < fb))
 
-	# LazyList spliters: partition, group, groupBy, groupOn,
-
-	group = (xs) ->
-		LazyList ->
-			iter = lazy(xs)[Symbol.iterator]()
-			t = nil
-			x = iter()
-			Iterator ->
-				if x is nil
-					nil
-				else if x != t
-					t = x
-					LazyList ->
-						Iterator ->
-							if (r = x) == t
-								x = iter()
-								r
-							else
-								nil
-
-	groupBy = (eq) -> (xs) ->
-		LazyList ->
-			iter = lazy(xs)[Symbol.iterator]()
-			t = nil
-			x = iter()
-			Iterator ->
-				if x is nil
-					nil
-				else if not eq(x, t)
-					t = x
-					LazyList ->
-						Iterator ->
-							if eq((r = x), t)
-								x = iter()
-								r
-							else
-								nil
+	# LazyList spliters: partition, groupOn,
 
 	groupOn = (f) -> #NOTE: strict! # f :: (Hashable b) => a -> b
 		(xs) ->
@@ -480,7 +444,7 @@ this_module = ({Symbol}) ->
 		cons, map, filter, take, takeWhile, drop, dropWhile, scanl, streak, reverse, sort, sortOn,
 
 		# LazyList spliters
-		group, groupBy, groupOn, partition,
+		groupOn, partition,
 
 		# LazyList combiners
 		concat, zip, zipWith, cartProd,

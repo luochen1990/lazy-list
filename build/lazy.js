@@ -3,7 +3,7 @@ var this_module,
   slice = [].slice;
 
 this_module = function(arg) {
-  var Iterator, LazyList, Symbol, all, any, best, brk, cartProd, concat, cons, drop, dropWhile, enumerate, filter, foldl, foreach, group, groupBy, groupOn, head, iterate, last, lazy, length, list, map, naturals, nil, partition, permutations, primes, randoms, range, ref, repeat, reverse, scanl, sort, sortOn, streak, take, takeWhile, zip, zipWith;
+  var Iterator, LazyList, Symbol, all, any, best, brk, cartProd, concat, cons, drop, dropWhile, enumerate, filter, foldl, foreach, groupOn, head, iterate, last, lazy, length, list, map, naturals, nil, partition, permutations, primes, randoms, range, ref, repeat, reverse, scanl, sort, sortOn, streak, take, takeWhile, zip, zipWith;
   Symbol = arg.Symbol;
   LazyList = function(f) {
     f[Symbol.iterator] = function() {
@@ -456,60 +456,6 @@ this_module = function(arg) {
       });
     };
   };
-  group = function(xs) {
-    return LazyList(function() {
-      var iter, t, x;
-      iter = lazy(xs)[Symbol.iterator]();
-      t = nil;
-      x = iter();
-      return Iterator(function() {
-        if (x === nil) {
-          return nil;
-        } else if (x !== t) {
-          t = x;
-          return LazyList(function() {
-            return Iterator(function() {
-              var r;
-              if ((r = x) === t) {
-                x = iter();
-                return r;
-              } else {
-                return nil;
-              }
-            });
-          });
-        }
-      });
-    });
-  };
-  groupBy = function(eq) {
-    return function(xs) {
-      return LazyList(function() {
-        var iter, t, x;
-        iter = lazy(xs)[Symbol.iterator]();
-        t = nil;
-        x = iter();
-        return Iterator(function() {
-          if (x === nil) {
-            return nil;
-          } else if (!eq(x, t)) {
-            t = x;
-            return LazyList(function() {
-              return Iterator(function() {
-                var r;
-                if (eq((r = x), t)) {
-                  x = iter();
-                  return r;
-                } else {
-                  return nil;
-                }
-              });
-            });
-          }
-        });
-      });
-    };
-  };
   groupOn = function(f) {
     return function(xs) {
       var k, memo, v;
@@ -896,8 +842,6 @@ this_module = function(arg) {
     reverse: reverse,
     sort: sort,
     sortOn: sortOn,
-    group: group,
-    groupBy: groupBy,
     groupOn: groupOn,
     partition: partition,
     concat: concat,
