@@ -5,6 +5,10 @@ describe 'spliters', ->
 			assertEq (-> last group nil), (-> nil)
 		it 'given [1, 2, 3, 3, 1] returns [[1], [2], [3, 3], [1]]', ->
 			assertEqOn(json) (-> list map(list) group [1, 2, 3, 3, 1]), (-> [[1], [2], [3, 3], [1]])
+		it 'given [1, 2, 3, 1, 1] returns [[1], [2], [3], [1, 1]]', ->
+			assertEqOn(json) (-> list map(list) group [1, 2, 3, 1, 1]), (-> [[1], [2], [3], [1, 1]])
+		xit 'given [1, 2, 3, 1, 1] on map(head) returns [1, 2, 3, 1]', ->
+			assertEqOn(json) (-> list map(head) group [1, 2, 3, 1, 1]), (-> [1, 2, 3, 1])
 
 	describe 'groupBy', ->
 		sameParity = (a, b) -> a % 2 == b % 2
