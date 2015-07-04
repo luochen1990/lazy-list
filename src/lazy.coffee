@@ -249,7 +249,7 @@ this_module = ({Symbol}) ->
 
 	sort = (xs) -> #NOTE: strict!
 		arr = list lazy(xs)
-		return arr.sort()
+		return arr.sort((a, b) -> (a > b) - (a < b))
 
 	sortOn = (f) -> #NOTE: strict! # f :: (Comparable b) => a -> b
 		(xs) ->

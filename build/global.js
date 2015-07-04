@@ -459,7 +459,9 @@ this_module = function(arg) {
   sort = function(xs) {
     var arr;
     arr = list(lazy(xs));
-    return arr.sort();
+    return arr.sort(function(a, b) {
+      return (a > b) - (a < b);
+    });
   };
   sortOn = function(f) {
     return function(xs) {

@@ -7,7 +7,7 @@ describe 'consumers', ->
 			assertEqOn(json) (-> list(3) naturals), (-> [0, 1, 2])
 		it 'given normal list do nothing', ->
 			ls0 = []
-			assertEqOn(object_id) (-> list ls0), (-> ls0)
+			assertEq (-> list ls0), (-> ls0)
 		it 'given lazy list returns normal list', ->
 			assertEqOn(json) (-> list range(2)), (-> [0, 1])
 		it 'given nil returns []', ->

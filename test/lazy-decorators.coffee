@@ -110,6 +110,7 @@ describe 'decorators', ->
 			assertEq (-> last sort nil), -> nil
 		it 'sort numbers correctly', ->
 			assertEqOn(every_one) (-> sort [1, 3, 4, 2, 2]), (-> [1, 2, 2, 3, 4])
+			assertEqOn(every_one) (-> sort [10, 3, 4, 2, 2]), (-> [2, 2, 3, 4, 10])
 
 	describe 'sortOn', ->
 		identity = (x) -> x

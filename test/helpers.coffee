@@ -3,19 +3,23 @@ if not window?
 	lazy = require '../src/global'
 	helpers = mate.dict([k, mate[k]] for k in ['log', 'assert', 'assertEq', 'assertEqOn', 'json', 'int', 'str'])
 
-	object_id = do ->
-		counter = 0
-		(obj) ->
-			return 0 if not obj?
-			obj.__obj_id = ++counter if not obj.__obj_id?
-			return obj.__obj_id
+	objectId = do ->
+		mem = []
+		f = (obj) ->
+			r = mem.indexOf(obj)
+			if r is -1
+				r = mem.length
+				mem.push obj
+			return r
+		f.reset = -> mem = []
+		return f
 
 	every_one = (arr) ->
-		(list map(object_id) arr).join(',')
+		(list map(objectId) arr).join(',')
 
 	plus = (x, y) -> x + y
 
-	Object.extend(helpers, {object_id, every_one, plus})
+	Object.extend(helpers, {objectId, every_one, plus})
 
 Object.extend((if window? then window else global), helpers)
 
