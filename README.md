@@ -1,5 +1,5 @@
-lazy.coffee
-===========
+Lazy List
+=========
 
 A lazy javascript library for Haskell & FP(Functional Programming) lovers.
 
@@ -15,7 +15,7 @@ A lazy javascript library for Haskell & FP(Functional Programming) lovers.
 Conceptions
 -----------
 
-Here explained the core conceptions of lazy.coffee. you can find [**APIs' descriptions and demo** here](APIs.md)
+Here explained the core conceptions of lazy-list. you can find [**APIs' descriptions and demo** here](APIs.md)
 
 ### nil, LazyList, Iterator
 
@@ -63,7 +63,7 @@ Do right things in right way keeps bugs away.
 
 ### use recursive definitions of LazyList everywhere
 
-Actually this is not mistake of users. But it is still not recommended to use recursive definitions frequently. Since there is neither graph reduction optimization in lazy.coffee nor tail call optimization in javascript. the performance of recursive programs is a big problem here.
+Actually this is not mistake of users. But it is still not recommended to use recursive definitions frequently. Since there is neither graph reduction optimization in lazy-list nor tail call optimization in javascript. the performance of recursive programs is a big problem here.
 
 here is a fibs recursive definition which has an exponential time complexity:
 
@@ -88,11 +88,11 @@ FAQ
 
 ### why not underscore?
 
-lazy.coffee is a better compromise between expressive ability and performance. underscore considers less on performance.
+lazy-list is a better compromise between expressive ability and performance. underscore considers less on performance.
 
 ### why not lazy.js?
 
-lazy.js did almost the same thing like lazy.coffee. But, if you don't like the "dot dot dot..." style, if you don't want to mix things up, if you want better named and designed apis, *lazy.coffee* is just for you! Moreover, this one works well with ES6, and has a litte [performance advantage](http://luochen1990.me/try_coffee?libs=%5B%22https%3A%2F%2Fcdn.rawgit.com%2Fdtao%2Flazy.js%2F0.4.0%2Flazy.min.js%22%5D#cnVuID0gKGYsIHNpemUgPSAxZTcsIHRpbWVzID0gMSkgLT4KCWZvciBpIGluIFswLi4udGltZXNdCgkJZihzaXplKQoKcGx1cyA9ICh4LCB5KSAtPiB4ICsgeQppbmMgPSAoeCkgLT4geCArIDEKCnRlc3QxID0gKGNhc2Vfc2l6ZSkgLT4KCW5hdGl2ZV9zdHlsZSA9IC0+CgkJciA9IDAKCQlmb3IgaSBpbiBbMC4uLmNhc2Vfc2l6ZV0KCQkJciArPSBpCgkJcmV0dXJuIHIKCWxvZyAtPiBuYXRpdmVfc3R5bGUoKQoJbG9nIC0+IExhenkucmFuZ2UoY2FzZV9zaXplKS5yZWR1Y2UocGx1cywgMCkKCWxvZyAtPiBmb2xkbChwbHVzLCAwKSByYW5nZShjYXNlX3NpemUpCgp0ZXN0MiA9IChjYXNlX3NpemUpIC0+CgluYXRpdmVfc3R5bGUyID0gLT4KCQlyID0gdHJ1ZQoJCW9rID0gZ3JlYXRlckVxdWFsKDApCgkJZm9yIGkgaW4gWzAuLi5jYXNlX3NpemVdCgkJCXggPSBpbmMoaSkKCQkJciA9IHIgYW5kIG9rIHgKCQlyZXR1cm4gcgoJbG9nIC0+IG5hdGl2ZV9zdHlsZTIoKQoJbG9nIC0+IExhenkucmFuZ2UoY2FzZV9zaXplKS5tYXAoaW5jKS5ub25lKGxlc3NUaGFuIDApCglsb2cgLT4gYWxsKGdyZWF0ZXJFcXVhbCAwKSBtYXAoaW5jKSByYW5nZShjYXNlX3NpemUpCgpydW4gdGVzdDEKcnVuIHRlc3QyLCAxZTY=) than lazy.js.
+lazy.js did almost the same thing like lazy-list. But, if you don't like the "dot dot dot..." style, if you don't want to mix things up, if you want better named and designed apis, *lazy-list* is just for you! Moreover, this one works well with ES6, and has a litte [performance advantage](http://luochen1990.me/try_coffee?libs=%5B%22https%3A%2F%2Fcdn.rawgit.com%2Fdtao%2Flazy.js%2F0.4.0%2Flazy.min.js%22%5D#cnVuID0gKGYsIHNpemUgPSAxZTcsIHRpbWVzID0gMSkgLT4KCWZvciBpIGluIFswLi4udGltZXNdCgkJZihzaXplKQoKcGx1cyA9ICh4LCB5KSAtPiB4ICsgeQppbmMgPSAoeCkgLT4geCArIDEKCnRlc3QxID0gKGNhc2Vfc2l6ZSkgLT4KCW5hdGl2ZV9zdHlsZSA9IC0+CgkJciA9IDAKCQlmb3IgaSBpbiBbMC4uLmNhc2Vfc2l6ZV0KCQkJciArPSBpCgkJcmV0dXJuIHIKCWxvZyAtPiBuYXRpdmVfc3R5bGUoKQoJbG9nIC0+IExhenkucmFuZ2UoY2FzZV9zaXplKS5yZWR1Y2UocGx1cywgMCkKCWxvZyAtPiBmb2xkbChwbHVzLCAwKSByYW5nZShjYXNlX3NpemUpCgp0ZXN0MiA9IChjYXNlX3NpemUpIC0+CgluYXRpdmVfc3R5bGUyID0gLT4KCQlyID0gdHJ1ZQoJCW9rID0gZ3JlYXRlckVxdWFsKDApCgkJZm9yIGkgaW4gWzAuLi5jYXNlX3NpemVdCgkJCXggPSBpbmMoaSkKCQkJciA9IHIgYW5kIG9rIHgKCQlyZXR1cm4gcgoJbG9nIC0+IG5hdGl2ZV9zdHlsZTIoKQoJbG9nIC0+IExhenkucmFuZ2UoY2FzZV9zaXplKS5tYXAoaW5jKS5ub25lKGxlc3NUaGFuIDApCglsb2cgLT4gYWxsKGdyZWF0ZXJFcXVhbCAwKSBtYXAoaW5jKSByYW5nZShjYXNlX3NpemUpCgpydW4gdGVzdDEKcnVuIHRlc3QyLCAxZTY=) than lazy.js.
 
 ### what is lazy evaluation?
 
@@ -115,14 +115,14 @@ Install
 
 #### install & require in nodejs
 
-- install with npm: `your/repo/> npm install lazy.coffee`
-- require separately: `{map, filter} = require 'lazy.coffee'`
-- require globally: `require 'lazy.coffee/global'`
+- install with npm: `your/repo/> npm install lazy-list`
+- require separately: `{map, filter} = require 'lazy-list'`
+- require globally: `require 'lazy-list/global'`
 
 #### reference in html directly
 
 ```html
-<script src="http://rawgit.com/luochen1990/lazy.coffee/master/build/global.coffee.js" type="text/javascript"></script>
+<script src="http://rawgit.com/luochen1990/lazy-list/master/build/global.coffee.js" type="text/javascript"></script>
 ```
 
 NOTE: this [*rawgit*](http://rawgit.com/) url is just for test, please don't use it for production.
@@ -130,7 +130,7 @@ NOTE: this [*rawgit*](http://rawgit.com/) url is just for test, please don't use
 Run demo
 --------
 
-run `coffee ./demo.coffee` under directory `lazy.coffee/` directly after you have `coffee-script` installed.
+run `coffee ./demo.coffee` under directory `lazy-list/` directly after you have `coffee-script` installed.
 
 Todo
 ----
