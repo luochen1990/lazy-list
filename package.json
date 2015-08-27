@@ -1,13 +1,13 @@
 {
-  "name": "lazy.coffee",
+  "name": "lazy-list",
   "version": "0.2.1",
   "description": "Fast Lazy List",
   "author": "luochen1990",
   "license": "MIT",
-  "homepage": "http://github.com/luochen1990/lazy.coffee",
+  "homepage": "http://github.com/luochen1990/lazy-list",
   "repository": {
     "type": "git",
-    "url": "git@github.com:luochen1990/lazy.coffee.git"
+    "url": "git@github.com:luochen1990/lazy-list.git"
   },
   "keywords": [
     "functional programming",
