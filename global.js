@@ -1,1 +1,1 @@
-require('./build/global.js');
+require('./build/nodejs/global.js');

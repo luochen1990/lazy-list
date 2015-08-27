@@ -155,7 +155,7 @@ this_module = ({Symbol}) ->
 			if arr.length == 0 then nil else
 				cons(arr[...]) takeWhile((ls) -> json(ls) != json(arr)) drop(1) iterate(next_permutation, arr)
 
-	# LazyList decorators: take, takeWhile, drop, dropWhile, cons, map, filter, scanl, streak, reverse, sort, sortOn
+	# LazyList decorators: take, takeWhile, drop, dropWhile, cons, map, filter, scanl, streak, streak2, reverse, sort, sortOn
 
 	take = (n) ->
 		(xs) ->
@@ -238,6 +238,8 @@ this_module = ({Symbol}) ->
 						buf.shift(1) if buf.length > n
 						return buf[...]
 
+	streak2 = (n) -> (xs) -> streak(n) concat [xs, take(n - 1) xs] #NOTE: unstandard!
+
 	reverse = (xs) ->
 		if xs.constructor in [Array, String] #xs is Array or String
 			LazyList ->
@@ -278,6 +280,7 @@ this_module = ({Symbol}) ->
 	# LazyList combiners: concat, zip, zipWith, cartProd,
 
 	concat = (xss) ->
+		xss = filter((x) -> x.constructor not in [Array, String] or x.length > 0) xss #TODO: more precise
 		LazyList ->
 			xs_iter = lazy(xss)[Symbol.iterator]()
 			xs = xs_iter()
@@ -343,7 +346,7 @@ this_module = ({Symbol}) ->
 				Iterator ->
 					if v[0] < limits[0] then (r = get_value v; inc v; r) else nil
 
-	# LazyList consumers: list, head, last, length, foldl, best, all, any, foreach,
+	# LazyList consumers: list, head, last, length, foldl, best, maximum, minimum, maximumOn, minimumOn, all, any, foreach,
 
 	list = (xs) -> #force list elements of the LazyList to get an array
 		if xs instanceof Array
@@ -358,7 +361,12 @@ this_module = ({Symbol}) ->
 			n = xs
 			(xs) -> list take(n) xs
 		else
-			throw Error 'list(xs): xs is neither Array nor Iterable'
+			throw Error {
+				message: 'list(xs): xs is neither Array nor Iterable'
+				info:
+					"xs": xs
+					"xs.constructor": xs?.constructor
+			}
 
 	head = (xs) -> #returns error if xs is empty
 		if xs.constructor in [Array, String]
@@ -394,13 +402,19 @@ this_module = ({Symbol}) ->
 			r = f(r, x) while (x = iter()) isnt nil
 			return r
 
-	best = (better) ->
+	best = (better) -> #NOTE: unstandard!
 		(xs) ->
 			iter = lazy(xs)[Symbol.iterator]()
 			return null if (r = iter()) is nil
 			while (it = iter()) isnt nil
 				r = if better(it, r) then it else r
 			return r
+
+	maximumOn = (f) -> best((a, b) -> f(a) > f(b)) #NOTE: unstandard!
+	minimumOn = (f) -> best((a, b) -> f(a) > f(b)) #NOTE: unstandard!
+
+	maximum = best((x, y) -> x > y)
+	minimum = best((x, y) -> x < y)
 
 	all = (f) ->
 		f = ((x) -> x is f) if typeof(f) isnt 'function'
@@ -413,6 +427,12 @@ this_module = ({Symbol}) ->
 	any = (f) ->
 		all_not = all (x) -> not f(x)
 		(xs) -> not (all_not xs)
+
+	fromList = (pairs) ->
+		r = {}
+		foreach pairs, ([k, v]) ->
+			r[k] = v
+		return r
 
 	brk = -> brk
 	brk.toString = -> 'foreach.break'
@@ -441,7 +461,7 @@ this_module = ({Symbol}) ->
 		lazy, enumerate, repeat, iterate, randoms, permutations,
 
 		# LazyList decorators
-		cons, map, filter, take, takeWhile, drop, dropWhile, scanl, streak, reverse, sort, sortOn,
+		cons, map, filter, take, takeWhile, drop, dropWhile, scanl, streak, streak2, reverse, sort, sortOn,
 
 		# LazyList spliters
 		groupOn, partition,
@@ -450,7 +470,7 @@ this_module = ({Symbol}) ->
 		concat, zip, zipWith, cartProd,
 
 		# LazyList consumers
-		list, head, last, length, foldl, best, all, any, foreach,
+		list, head, last, length, foldl, best, maximum, minimum, maximumOn, minimumOn, all, any, fromList, foreach,
 	}
 
 module.exports = this_module

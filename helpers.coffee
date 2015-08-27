@@ -10,6 +10,9 @@ sourcemaps = require('gulp-sourcemaps')
 rename = require('gulp-rename')
 filter = require('gulp-filter')
 gutil = require('gulp-util')
+coffee = require('gulp-coffee')
+plumber = require('gulp-plumber')
+require 'shelljs/global'
 
 watched_browserify = do ->
 	watchify = require('watchify')
@@ -36,7 +39,7 @@ watched_browserify = do ->
 coffee_builder = do ->
 	buffer = require('vinyl-buffer')
 
-	(fname, opts) ->
+	(fname, dest, opts) ->
 		watched_browserify {
 			src: "./src/#{fname}.coffee"
 			rename: "#{fname}.js"
@@ -46,19 +49,20 @@ coffee_builder = do ->
 			src.pipe(buffer()) #optional
 				.pipe(sourcemaps.init({loadMaps: true}))
 				.pipe(sourcemaps.write('./'))
-				.pipe(gulp.dest('./build'))
+				.pipe(gulp.dest(dest))
 				.pipe(filter('*.js'))
 				.pipe(sourcemaps.init({loadMaps: true}))
 				.pipe(uglify())
 				.on('error', gutil.log)
 				.pipe(rename(extname: '.min.js'))
 				.pipe(sourcemaps.write('./'))
-				.pipe(gulp.dest('./build'))
+				.pipe(gulp.dest(dest))
 
 gulp.task 'clean', (done) -> del(['build/*'], done)
 
 extend(global) {
 	extend, gulp, del, gutil,
 	uglify, sourcemaps, rename, filter,
+	coffee, plumber,
 	watched_browserify, coffee_builder,
 }

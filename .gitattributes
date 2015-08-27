@@ -1,2 +1,2 @@
-build/* -diff
+build/**/* -diff
 *.coffee diff=python
