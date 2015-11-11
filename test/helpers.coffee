@@ -19,7 +19,17 @@ if not window?
 
 	plus = (x, y) -> x + y
 
-	Object.extend(helpers, {objectId, every_one, plus})
+	assertFail = (process) ->
+		failed = false
+		result = null
+		try
+			result = do process
+		catch
+			failed = true
+		if not failed
+			throw Error "An Exception Expected, But Got #{result}"
+
+	Object.extend(helpers, {objectId, every_one, plus, assertFail})
 
 Object.extend((if window? then window else global), helpers)
 

@@ -13,10 +13,20 @@ describe 'consumers', ->
 		it 'given nil returns []', ->
 			assertEqOn(json) (-> list nil), (-> [])
 
+	describe 'head', ->
+		it 'given [] or nil returns error', ->
+			assertFail (-> head [])
+			assertFail (-> head nil)
+		it 'given [n..m] or drop(n) naturals returns n', ->
+			assertEq (-> head [1]), (-> 1)
+			assertEq (-> head [1, 2]), (-> 1)
+			assertEq (-> head drop(1) naturals), (-> 1)
+			assertEq (-> head drop(100) naturals), (-> 100)
+
 	describe 'last', ->
-		it 'given [] or nil returns nil', ->
-			assertEq (-> last []), (-> nil)
-			assertEq (-> last nil), (-> nil)
+		it 'given [] or nil returns error', ->
+			assertFail (-> last [])
+			assertFail (-> last nil)
 		it 'given [1..n] or take(n+1) naturals returns n', ->
 			assertEq (-> last [1]), (-> 1)
 			assertEq (-> last [1, 2]), (-> 2)

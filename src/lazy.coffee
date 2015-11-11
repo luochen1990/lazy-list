@@ -1,4 +1,15 @@
 this_module = ({Symbol}) ->
+	CustomErrorType = (errorName) ->
+		(msg) ->
+			CustomError = (msg)->
+				self = new Error msg
+				self.name = errorName
+				self.__proto__ = CustomError.prototype
+				return self
+			CustomError.prototype.__proto__= Error.prototype
+			return new CustomError(msg)
+
+	ListError = CustomErrorType('ListError')
 
 	# LazyList definition: nil, LazyList, Iterator,
 
@@ -48,7 +59,7 @@ this_module = ({Symbol}) ->
 		else
 			LazyList ->
 				[start, stop, step] = args
-				throw 'ERR IN range(): YOU ARE CREATING AN UNLIMITTED RANGE' if stop != start and (stop - start) * step < 0
+				throw ListError 'ERR IN range(): YOU ARE CREATING AN UNLIMITTED RANGE' if stop != start and (stop - start) * step < 0
 				i = start - step
 				if start < stop
 					Iterator ->
@@ -80,7 +91,7 @@ this_module = ({Symbol}) ->
 					r = it.next()
 					if r.done then nil else r.value
 		else
-			throw Error 'lazy(xs): xs is neither Array nor Iterable'
+			throw ListError 'lazy(xs): xs is neither Array nor Iterable'
 
 	enumerate = (it) -> # Iterator with index(with key for object)
 		if it[Symbol.iterator]? or it instanceof Array
@@ -361,32 +372,35 @@ this_module = ({Symbol}) ->
 			n = xs
 			(xs) -> list take(n) xs
 		else
-			throw Error {
-				message: 'list(xs): xs is neither Array nor Iterable'
-				info:
-					"xs": xs
-					"xs.constructor": xs?.constructor
-			}
+			throw ListError 'list(xs): xs is neither Array nor Iterable'
 
 	head = (xs) -> #returns error if xs is empty
 		if xs.constructor in [Array, String]
 			if xs.length > 0
 				return xs[0]
 			else
-				throw "Error: head() used on empty list."
+				throw ListError "head() used on empty list."
 		else
 			iter = lazy(xs)[Symbol.iterator]()
 			if (r = iter()) isnt nil
 				return r
 			else
-				throw "Error: head() used on empty list."
+				throw ListError "head() used on empty list."
 
-	last = (xs) -> #returns nil if xs is empty
-		if xs.constructor in [Array, String] then xs[xs.length - 1] ? nil else
+	last = (xs) -> #returns error if xs is empty
+		if xs.constructor in [Array, String]
+			if xs.length > 0
+				return xs[xs.length - 1]
+			else
+				throw ListError "last() used on empty list."
+		else
 			iter = lazy(xs)[Symbol.iterator]()
 			r = nil
 			r = x while (x = iter()) isnt nil
-			return r
+			if r isnt nil
+				return r
+			else
+				throw ListError "last() used on empty list."
 
 	length = (xs) ->
 		if xs.constructor in [Array, String] then xs.length else
@@ -431,7 +445,7 @@ this_module = ({Symbol}) ->
 	fromList = (pairs) ->
 		r = {}
 		foreach pairs, ([k, v]) ->
-			r[k] = v
+			r[k] = v if v isnt undefined
 		return r
 
 	brk = -> brk

@@ -2,7 +2,7 @@ describe 'decorators', ->
 
 	describe 'cons', ->
 		it '(cons(nil) nil) is empty', ->
-			assertEq (-> last cons(nil) nil), (-> nil)
+			assertEq (-> length cons(nil) nil), (-> 0)
 		it '(cons(1) nil) is lazy [1]', ->
 			assertEqOn(every_one) (-> cons(1) nil), (-> [1])
 		it 'can be used to define lazy list recursively', ->
@@ -15,9 +15,9 @@ describe 'decorators', ->
 		inc = (x) -> x + 1
 
 		it 'map(f) given nil returns empty lazy list', ->
-			assertEq (-> last map(inc) nil), (-> nil)
+			assertEq (-> length map(inc) nil), (-> 0)
 		it 'map(f) given [] returns empty lazy list', ->
-			assertEq (-> last map(inc) []), (-> nil)
+			assertEq (-> length map(inc) []), (-> 0)
 		it 'did mapped every elements', ->
 			assertEqOn(json) (-> list map(inc) [1, 1, 1]), (-> [2, 2, 2])
 			assertEqOn(json) (-> list map(inc) range(1, 10)), (-> list range(2, 11))
@@ -26,11 +26,11 @@ describe 'decorators', ->
 		positive = (x) -> x > 0
 
 		it 'filter(f) given nil returns empty lazy list', ->
-			assertEq (-> last filter(positive) nil), (-> nil)
+			assertEq (-> length filter(positive) nil), (-> 0)
 		it 'filter(f) given [] returns empty lazy list', ->
-			assertEq (-> last filter(positive) []), (-> nil)
+			assertEq (-> length filter(positive) []), (-> 0)
 		it 'filter(f) given xs returns all x which makes f(x) to be true', ->
-			assertEq (-> last filter(positive) [-1, -2, -3]), (-> nil)
+			assertEq (-> length filter(positive) [-1, -2, -3]), (-> 0)
 			assertEqOn(every_one) (-> filter(positive) [1, 2, -3, 4, -5, 6]), (-> [1, 2, 4, 6])
 			assertEqOn(every_one) (-> filter(positive) [1, 2, 3]), (-> [1, 2, 3])
 		it 'do nothing with nil', ->
@@ -41,12 +41,12 @@ describe 'decorators', ->
 
 	describe 'take', ->
 		it '(take(0) xs) returns empty list', ->
-			assertEq (-> last take(0) naturals), -> nil
+			assertEq (-> length take(0) naturals), -> 0
 		it '(take(n) xs) returns list with first n x', ->
 			assertEqOn(json) (-> list take(1) naturals), -> [0]
 			assertEqOn(json) (-> list take(3) naturals), -> [0, 1, 2]
 		it '(take(n) xs) returns xs if length xs <= n', ->
-			assertEq (-> last take(1) nil), -> nil
+			assertEq (-> length take(1) nil), -> 0
 			assertEqOn(json) (-> list take(10) range(1)), -> [0]
 			assertEqOn(json) (-> list take(10) range(3)), -> [0, 1, 2]
 
@@ -54,7 +54,7 @@ describe 'decorators', ->
 		positive = (x) -> x > 0
 
 		it 'may returns empty list', ->
-			assertEq (-> last takeWhile(-> false) naturals), -> nil
+			assertEq (-> length takeWhile(-> false) naturals), -> 0
 		it 'returns first n ok elements', ->
 			assertEqOn(json) (-> list takeWhile(positive) [-1, 1]), -> []
 			assertEqOn(json) (-> list takeWhile(positive) [1, -2, 3]), -> [1]
@@ -73,7 +73,7 @@ describe 'decorators', ->
 		positive = (x) -> x > 0
 
 		it 'may returns empty list', ->
-			assertEq (-> last takeWhile(-> false) naturals), -> nil
+			assertEq (-> length takeWhile(-> false) naturals), -> 0
 		it 'returns first n ok elements', ->
 			assertEqOn(json) (-> list takeWhile(positive) [-1, 1]), -> []
 			assertEqOn(json) (-> list takeWhile(positive) [1, -2, 3]), -> [1]
@@ -88,7 +88,7 @@ describe 'decorators', ->
 
 	describe 'streak', ->
 		it 'streak(n) nil returns empty list', ->
-			assertEq (-> last streak(3) nil), -> nil
+			assertEq (-> length streak(3) nil), -> 0
 		it 'streak(0) [0, 1, 2] returns []', ->
 			assertEqOn(json) (-> list streak(0) range(3)), (-> [])
 		it 'streak(1) [0, 1, 2] returns [[0], [1], [2]]', ->
@@ -100,14 +100,14 @@ describe 'decorators', ->
 
 	describe 'reverse', ->
 		it 'given empty list returns empty list', ->
-			assertEq (-> last reverse nil), -> nil
-			assertEq (-> last reverse (lazy -> do nil)), -> nil
+			assertEq (-> length reverse nil), -> 0
+			assertEq (-> length reverse (lazy -> do nil)), -> 0
 		it 'reverse [0..4] returns [4..0]', ->
 			assertEqOn(json) (-> list reverse range(5)), (-> [4, 3, 2, 1, 0])
 
 	describe 'sort', ->
 		it 'given [] returns []', ->
-			assertEq (-> last sort nil), -> nil
+			assertEq (-> length sort nil), -> 0
 		it 'sort numbers correctly', ->
 			assertEqOn(every_one) (-> sort [1, 3, 4, 2, 2]), (-> [1, 2, 2, 3, 4])
 			assertEqOn(every_one) (-> sort [10, 3, 4, 2, 2]), (-> [2, 2, 3, 4, 10])
@@ -117,7 +117,7 @@ describe 'decorators', ->
 		negative = (x) -> -x
 
 		it 'given [] returns []', ->
-			assertEq (-> last sortOn(identity) nil), -> nil
+			assertEq (-> length sortOn(identity) nil), -> 0
 		it 'sort numbers correctly', ->
 			assertEqOn(every_one) (-> sortOn(negative) [1, 3, 4, 2, 2]), (-> [4, 3, 2, 2, 1])
 

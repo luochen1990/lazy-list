@@ -3,8 +3,23 @@
     slice = [].slice;
 
   this_module = function(arg) {
-    var Iterator, LazyList, Symbol, all, any, best, brk, cartProd, concat, cons, drop, dropWhile, enumerate, filter, foldl, foreach, fromList, groupOn, head, iterate, last, lazy, length, list, map, maximum, maximumOn, minimum, minimumOn, naturals, nil, partition, permutations, primes, randoms, range, ref, repeat, reverse, scanl, sort, sortOn, streak, streak2, take, takeWhile, zip, zipWith;
+    var CustomErrorType, Iterator, LazyList, ListError, Symbol, all, any, best, brk, cartProd, concat, cons, drop, dropWhile, enumerate, filter, foldl, foreach, fromList, groupOn, head, iterate, last, lazy, length, list, map, maximum, maximumOn, minimum, minimumOn, naturals, nil, partition, permutations, primes, randoms, range, ref, repeat, reverse, scanl, sort, sortOn, streak, streak2, take, takeWhile, zip, zipWith;
     Symbol = arg.Symbol;
+    CustomErrorType = function(errorName) {
+      return function(msg) {
+        var CustomError;
+        CustomError = function(msg) {
+          var self;
+          self = new Error(msg);
+          self.name = errorName;
+          self.__proto__ = CustomError.prototype;
+          return self;
+        };
+        CustomError.prototype.__proto__ = Error.prototype;
+        return new CustomError(msg);
+      };
+    };
+    ListError = CustomErrorType('ListError');
     LazyList = function(f) {
       f[Symbol.iterator] = function() {
         return f();
@@ -88,7 +103,7 @@
           var i, start, step, stop;
           start = args[0], stop = args[1], step = args[2];
           if (stop !== start && (stop - start) * step < 0) {
-            throw 'ERR IN range(): YOU ARE CREATING AN UNLIMITTED RANGE';
+            throw ListError('ERR IN range(): YOU ARE CREATING AN UNLIMITTED RANGE');
           }
           i = start - step;
           if (start < stop) {
@@ -155,7 +170,7 @@
           });
         });
       } else {
-        throw Error('lazy(xs): xs is neither Array nor Iterable');
+        throw ListError('lazy(xs): xs is neither Array nor Iterable');
       }
     };
     enumerate = function(it) {
@@ -707,13 +722,7 @@
           return list(take(n)(xs));
         };
       } else {
-        throw Error({
-          message: 'list(xs): xs is neither Array nor Iterable',
-          info: {
-            "xs": xs,
-            "xs.constructor": xs != null ? xs.constructor : void 0
-          }
-        });
+        throw ListError('list(xs): xs is neither Array nor Iterable');
       }
     };
     head = function(xs) {
@@ -722,28 +731,36 @@
         if (xs.length > 0) {
           return xs[0];
         } else {
-          throw "Error: head() used on empty list.";
+          throw ListError("head() used on empty list.");
         }
       } else {
         iter = lazy(xs)[Symbol.iterator]();
         if ((r = iter()) !== nil) {
           return r;
         } else {
-          throw "Error: head() used on empty list.";
+          throw ListError("head() used on empty list.");
         }
       }
     };
     last = function(xs) {
-      var iter, r, ref1, ref2, x;
+      var iter, r, ref1, x;
       if ((ref1 = xs.constructor) === Array || ref1 === String) {
-        return (ref2 = xs[xs.length - 1]) != null ? ref2 : nil;
+        if (xs.length > 0) {
+          return xs[xs.length - 1];
+        } else {
+          throw ListError("last() used on empty list.");
+        }
       } else {
         iter = lazy(xs)[Symbol.iterator]();
         r = nil;
         while ((x = iter()) !== nil) {
           r = x;
         }
-        return r;
+        if (r !== nil) {
+          return r;
+        } else {
+          throw ListError("last() used on empty list.");
+        }
       }
     };
     length = function(xs) {
@@ -831,7 +848,9 @@
       foreach(pairs, function(arg1) {
         var k, v;
         k = arg1[0], v = arg1[1];
-        return r[k] = v;
+        if (v !== void 0) {
+          return r[k] = v;
+        }
       });
       return r;
     };

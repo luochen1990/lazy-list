@@ -2,7 +2,7 @@ describe 'constants', ->
 
 	describe 'naturals', ->
 		it 'taken 0 returns nil', ->
-			assertEq (-> last take(0) naturals), (-> nil)
+			assertEq (-> length take(0) naturals), (-> 0)
 		it 'starts with 0', ->
 			assertEq (-> last take(1) naturals), (-> 0)
 		it 'taken n returns [0..n-1]', ->
@@ -24,7 +24,7 @@ describe 'constants', ->
 
 	describe 'primes', ->
 		it 'taken 0 returns empty list', ->
-			assertEq (-> last take(0) primes), -> nil
+			assertEq (-> length take(0) primes), -> 0
 		it 'taken n gives n primes', ->
 			assertEqOn(every_one) (-> take(5) primes), -> [2, 3, 5, 7, 11]
 

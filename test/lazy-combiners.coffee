@@ -2,9 +2,9 @@ describe 'combiners', ->
 
 	describe 'concat', ->
 		it 'concat(nil) returns empty', ->
-			assertEq (-> last concat nil), -> nil
+			assertEq (-> length concat nil), -> 0
 		it 'concat([nil, nil]) returns empty', ->
-			assertEq (-> last concat [nil, nil]), -> nil
+			assertEq (-> length concat [nil, nil]), -> 0
 		it 'concat([nil, xs]) returns xs', ->
 			assertEqOn(json) (-> list concat [nil, [1, 2, 3]]), -> [1, 2, 3]
 			assertEqOn(json) (-> list concat [nil, range(2)]), -> [0, 1]
@@ -15,11 +15,11 @@ describe 'combiners', ->
 
 	describe 'zip', ->
 		it 'zip(nil) returns empty', ->
-			assertEq (-> last zip(nil)), -> nil
+			assertEq (-> length zip(nil)), -> 0
 		it 'zip(nil, xs) returns empty', ->
-			assertEq (-> last zip(nil, naturals)), -> nil
+			assertEq (-> length zip(nil, naturals)), -> 0
 		it 'zip(xs, nil) returns empty', ->
-			assertEq (-> last zip(naturals, nil)), -> nil
+			assertEq (-> length zip(naturals, nil)), -> 0
 		it 'zip(xs, ys) returns [[x1, y1], [x2, y2] ...]', ->
 			assertEqOn(json) (-> list zip(naturals, ['a', 'b'])), -> [[0, 'a'], [1, 'b']]
 			assertEqOn(json) (-> list zip(['a', 'b'], naturals)), -> [['a', 0], ['b', 1]]
@@ -32,11 +32,11 @@ describe 'combiners', ->
 		strcat = (args...) -> args.join(',')
 
 		it 'zipWith(strcat)(nil) returns empty', ->
-			assertEq (-> last zipWith(strcat)(nil)), -> nil
+			assertEq (-> length zipWith(strcat)(nil)), -> 0
 		it 'zipWith(strcat)(nil, xs) returns empty', ->
-			assertEq (-> last zipWith(strcat)(nil, naturals)), -> nil
+			assertEq (-> length zipWith(strcat)(nil, naturals)), -> 0
 		it 'zipWith(strcat)(xs, nil) returns empty', ->
-			assertEq (-> last zipWith(strcat)(naturals, nil)), -> nil
+			assertEq (-> length zipWith(strcat)(naturals, nil)), -> 0
 		it 'zipWith(strcat)(xs, ys) returns [strcat(x1, y1), strcat(x2, y2) ...]', ->
 			assertEqOn(json) (-> list zipWith(strcat)(naturals, ['a', 'b'])), -> ['0,a', '1,b']
 			assertEqOn(json) (-> list zipWith(strcat)(['a', 'b'], naturals)), -> ['a,0', 'b,1']
@@ -47,12 +47,12 @@ describe 'combiners', ->
 
 	describe 'cartProd', ->
 		it 'cartProd(nil) returns nil', ->
-			assertEq (-> last cartProd(nil)), -> nil
+			assertEq (-> length cartProd(nil)), -> 0
 		it 'cartProd(nil, ys) returns nil', ->
-			assertEq (-> last cartProd(nil, [1, 2])), -> nil
+			assertEq (-> length cartProd(nil, [1, 2])), -> 0
 		it 'cartProd(xs, nil) returns nil', ->
 			log -> list cartProd [1, 2], nil
-			assertEq (-> last cartProd([1, 2], nil)), -> nil
+			assertEq (-> length cartProd([1, 2], nil)), -> 0
 		it 'cartProd(xs, ys) returns [[x1, y1], [x1, y2] ... [x2, y1], [x2, y2] ...]', ->
 			assertEqOn(json) (-> list cartProd([1, 2], ['a', 'b'])), -> [[1, 'a'], [1, 'b'], [2, 'a'], [2, 'b']]
 		it 'cartProd(xs, ys, zs) returns [[x1, y1, z1], [x1, y1, z2] ...', ->

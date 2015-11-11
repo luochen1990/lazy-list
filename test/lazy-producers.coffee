@@ -3,9 +3,9 @@ describe 'producers', ->
 	describe 'lazy', ->
 		it 'given function works as alias of lazylist', ->
 			assert -> (lazy (-> do nil))[Symbol.iterator]?
-			assertEq (-> last lazy (-> do nil)), -> nil
+			assertEq (-> length lazy (-> do nil)), -> 0
 		it 'given array returns an iterator', ->
-			assertEq (-> last lazy []), -> nil
+			assertEq (-> length lazy []), -> 0
 			assert -> (lazy [1, 2, 3])[Symbol.iterator]?
 			assertEqOn(every_one) (-> lazy [1, 2, 3]), -> [1, 2, 3]
 			arr = [{}, {}, {}]
@@ -13,9 +13,9 @@ describe 'producers', ->
 
 	describe 'enumerate', ->
 		it 'given nil or [] or {} returns empty', ->
-			assertEq (-> last enumerate nil), -> nil
-			assertEq (-> last enumerate []), -> nil
-			assertEq (-> last enumerate {}), -> nil
+			assertEq (-> length enumerate nil), -> 0
+			assertEq (-> length enumerate []), -> 0
+			assertEq (-> length enumerate {}), -> 0
 		it 'given ["a", "b"] returns [[0, "a"], [1, "b"]]', ->
 			assertEqOn(json) (-> list enumerate ["a", "b"]), -> [[0, "a"], [1, "b"]]
 		#it 'given "ab" returns [[0, "a"], [1, "b"]]', ->
@@ -70,7 +70,7 @@ describe 'producers', ->
 
 	describe 'permutations', ->
 		it 'given [] returns empty', ->
-			assertEq (-> last permutations []), nil
+			assertEqOn(json) (-> list permutations []), -> []
 		it 'given [1] returns [[1]]', ->
 			assertEqOn(json) (-> list permutations [1]), -> [[1]]
 		it 'given [1, 2] returns [[1, 2], [2, 1]]', ->
