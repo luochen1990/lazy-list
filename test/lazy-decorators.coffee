@@ -82,9 +82,9 @@ describe 'decorators', ->
 
 	describe 'scanl', ->
 		it 'scanl(f, x) nil returns x', ->
-			assertEq (-> last scanl(plus, 3) nil), -> 3
+			assertEq (-> last scanl(plus)(3) nil), -> 3
 		it 'scanl(plus, 0) [1..5] returns [0, 1 ... 15]', ->
-			assertEqOn(json) (-> list scanl(plus, 0) range(1, 6)), -> [0, 1, 3, 6, 10, 15]
+			assertEqOn(json) (-> list scanl(plus)(0) range(1, 6)), -> [0, 1, 3, 6, 10, 15]
 
 	describe 'streak', ->
 		it 'streak(n) nil returns empty list', ->

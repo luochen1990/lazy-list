@@ -52,13 +52,13 @@ describe 'consumers', ->
 
 	describe 'foldl', ->
 		it 'accepts normal list', ->
-			assertEq (-> foldl(plus, 0) [1, 2, 3]), -> 6
+			assertEq (-> foldl(plus)(0) [1, 2, 3]), -> 6
 		it 'accepts lazy list', ->
-			assertEq (-> foldl(plus, 0) range(1, 4)), -> 6
-		it 'foldl(f, r) given nil returns r', ->
-			assertEq (-> foldl(plus, 9) nil), -> 9
+			assertEq (-> foldl(plus)(0) range(1, 4)), -> 6
+		it 'foldl(op)(r) given nil returns r', ->
+			assertEq (-> foldl(plus)(9) nil), -> 9
 		it 'is safe when partly-applied named', ->
-			named_folder = foldl ((r, x) -> r + (x)), 0
+			named_folder = foldl((r) -> (x) -> r + x)(0)
 			assertEq (-> named_folder [1, 2]), -> 3
 			assertEq (-> named_folder [1, 3]), -> 4
 

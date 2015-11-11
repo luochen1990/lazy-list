@@ -403,18 +403,20 @@ this_module = function(arg) {
       });
     };
   };
-  scanl = function(f, r) {
-    return function(xs) {
-      return LazyList(function() {
-        var iter;
-        iter = lazy(xs)[Symbol.iterator]();
-        return Iterator(function() {
-          var got, x;
-          got = r;
-          r = (x = iter()) !== nil ? f(r, x) : nil;
-          return got;
+  scanl = function(op) {
+    return function(r) {
+      return function(xs) {
+        return LazyList(function() {
+          var iter;
+          iter = lazy(xs)[Symbol.iterator]();
+          return Iterator(function() {
+            var got, x;
+            got = r;
+            r = (x = iter()) !== nil ? op(r)(x) : nil;
+            return got;
+          });
         });
-      });
+      };
     };
   };
   streak = function(n) {
@@ -779,15 +781,17 @@ this_module = function(arg) {
       return r;
     }
   };
-  foldl = function(f, init) {
-    return function(xs) {
-      var iter, r, x;
-      r = init;
-      iter = lazy(xs)[Symbol.iterator]();
-      while ((x = iter()) !== nil) {
-        r = f(r, x);
-      }
-      return r;
+  foldl = function(op) {
+    return function(init) {
+      return function(xs) {
+        var iter, r, x;
+        r = init;
+        iter = lazy(xs)[Symbol.iterator]();
+        while ((x = iter()) !== nil) {
+          r = op(r)(x);
+        }
+        return r;
+      };
     };
   };
   best = function(better) {

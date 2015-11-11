@@ -17,7 +17,7 @@ if not window?
 	every_one = (arr) ->
 		(list map(objectId) arr).join(',')
 
-	plus = (x, y) -> x + y
+	plus = (x) -> (y) -> x + y
 
 	assertFail = (process) ->
 		failed = false

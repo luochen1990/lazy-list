@@ -227,13 +227,13 @@ this_module = ({Symbol}) ->
 					null while (x = iter()) isnt nil and not ok(x)
 					return x
 
-	scanl = (f, r) ->
+	scanl = (op) -> (r) ->
 		(xs) ->
 			LazyList ->
 				iter = lazy(xs)[Symbol.iterator]()
 				Iterator ->
 					got = r
-					r = if (x = iter()) isnt nil then f(r, x) else nil
+					r = if (x = iter()) isnt nil then op(r)(x) else nil
 					return got
 
 	streak = (n) -> #NOTE: unstandard!
@@ -410,11 +410,11 @@ this_module = ({Symbol}) ->
 			++r while (x = iter()) isnt nil
 			return r
 
-	foldl = (f, init) ->
+	foldl = (op) -> (init) ->
 		(xs) ->
 			r = init
 			iter = lazy(xs)[Symbol.iterator]()
-			r = f(r, x) while (x = iter()) isnt nil
+			r = op(r)(x) while (x = iter()) isnt nil
 			return r
 
 	best = (better) -> #NOTE: unstandard!
