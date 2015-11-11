@@ -16,6 +16,7 @@ this_module = ({Symbol}) ->
 	LazyList = (f) -> # construct a LazyList from a function.
 		f[Symbol.iterator] = -> f()
 		f.toString = -> "LazyList"
+		f.toJSON = -> list f
 		return f
 
 	nil = LazyList -> nil # xs is empty <==> xs is nil or xs() is nil or xs()() is nil... <==> last xs is nil

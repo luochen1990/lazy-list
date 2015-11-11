@@ -27,6 +27,9 @@
       f.toString = function() {
         return "LazyList";
       };
+      f.toJSON = function() {
+        return list(f);
+      };
       return f;
     };
     nil = LazyList(function() {
