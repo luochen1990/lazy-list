@@ -814,7 +814,7 @@
     };
     minimumOn = function(f) {
       return best(function(a, b) {
-        return f(a) > f(b);
+        return f(a) < f(b);
       });
     };
     maximum = best(function(x, y) {

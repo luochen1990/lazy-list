@@ -426,7 +426,7 @@ this_module = ({Symbol}) ->
 			return r
 
 	maximumOn = (f) -> best((a, b) -> f(a) > f(b)) #NOTE: unstandard!
-	minimumOn = (f) -> best((a, b) -> f(a) > f(b)) #NOTE: unstandard!
+	minimumOn = (f) -> best((a, b) -> f(a) < f(b)) #NOTE: unstandard!
 
 	maximum = best((x, y) -> x > y)
 	minimum = best((x, y) -> x < y)
