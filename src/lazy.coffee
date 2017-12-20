@@ -72,7 +72,7 @@ this_module = ({Symbol}) ->
 	primes = LazyList -> do
 		filter((x) -> all((p) -> x % p != 0) takeWhile((p) -> p * p <= x) range(2, Infinity)) range(2, Infinity)
 
-	# LazyList producers: lazy, enumerate, iterate, randoms, permutations,
+	# LazyList producers: lazy, enumerate, iterate, randoms, permutations, powerset
 
 	lazy = (xs) -> #make a LazyList from Function/LazyList/Array/String/ES6Lazy
 		if typeof xs is 'function'
@@ -166,6 +166,8 @@ this_module = ({Symbol}) ->
 			arr = list xs
 			if arr.length == 0 then nil else
 				cons(arr[...]) takeWhile((ls) -> json(ls) != json(arr)) drop(1) iterate(next_permutation, arr)
+
+	powerset = (xs) -> if length(xs) == 0 then [[]] else (ss = powerset(drop(1) xs); concat([ss, map(cons head(xs))(ss)]))
 
 	# LazyList decorators: take, takeWhile, drop, dropWhile, cons, map, filter, scanl, streak, streak2, reverse, sort, sortOn
 
@@ -388,6 +390,8 @@ this_module = ({Symbol}) ->
 			else
 				throw ListError "head() used on empty list."
 
+	tail = drop(1)
+
 	last = (xs) -> #returns error if xs is empty
 		if xs.constructor in [Array, String]
 			if xs.length > 0
@@ -473,10 +477,10 @@ this_module = ({Symbol}) ->
 		naturals, range, primes,
 
 		# LazyList producers
-		lazy, enumerate, repeat, iterate, randoms, permutations,
+		lazy, enumerate, repeat, iterate, randoms, permutations, powerset,
 
 		# LazyList decorators
-		cons, map, filter, take, takeWhile, drop, dropWhile, scanl, streak, streak2, reverse, sort, sortOn,
+		cons, map, filter, take, takeWhile, tail, drop, dropWhile, scanl, streak, streak2, reverse, sort, sortOn,
 
 		# LazyList spliters
 		groupOn, partition,

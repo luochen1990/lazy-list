@@ -3,7 +3,7 @@
     slice = [].slice;
 
   this_module = function(arg) {
-    var CustomErrorType, Iterator, LazyList, ListError, Symbol, all, any, best, brk, cartProd, concat, cons, drop, dropWhile, enumerate, filter, foldl, foreach, fromList, groupOn, head, iterate, last, lazy, length, list, map, maximum, maximumOn, minimum, minimumOn, naturals, nil, partition, permutations, primes, randoms, range, ref, repeat, reverse, scanl, sort, sortOn, streak, streak2, take, takeWhile, zip, zipWith;
+    var CustomErrorType, Iterator, LazyList, ListError, Symbol, all, any, best, brk, cartProd, concat, cons, drop, dropWhile, enumerate, filter, foldl, foreach, fromList, groupOn, head, iterate, last, lazy, length, list, map, maximum, maximumOn, minimum, minimumOn, naturals, nil, partition, permutations, powerset, primes, randoms, range, ref, repeat, reverse, scanl, sort, sortOn, streak, streak2, tail, take, takeWhile, zip, zipWith;
     Symbol = arg.Symbol;
     CustomErrorType = function(errorName) {
       return function(msg) {
@@ -135,8 +135,8 @@
           return x % p !== 0;
         })(takeWhile(function(p) {
           return p * p <= x;
-        })(range(2, Infinity)));
-      })(range(2, Infinity))();
+        })(range(2, 2e308)));
+      })(range(2, 2e308))();
     });
     lazy = function(xs) {
       var ref;
@@ -286,6 +286,15 @@
         }
       };
     })();
+    powerset = function(xs) {
+      var ss;
+      if (length(xs) === 0) {
+        return [[]];
+      } else {
+        ss = powerset(drop(1)(xs));
+        return concat([ss, map(cons(head(xs)))(ss)]);
+      }
+    };
     take = function(n) {
       return function(xs) {
         return LazyList(function() {
@@ -747,6 +756,7 @@
         }
       }
     };
+    tail = drop(1);
     last = function(xs) {
       var iter, r, ref1, x;
       if ((ref1 = xs.constructor) === Array || ref1 === String) {
@@ -899,11 +909,13 @@
       iterate: iterate,
       randoms: randoms,
       permutations: permutations,
+      powerset: powerset,
       cons: cons,
       map: map,
       filter: filter,
       take: take,
       takeWhile: takeWhile,
+      tail: tail,
       drop: drop,
       dropWhile: dropWhile,
       scanl: scanl,
